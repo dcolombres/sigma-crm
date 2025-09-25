@@ -1,15 +1,12 @@
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
 import { DeleteButton } from '@/components/DeleteButton';
 
-// --- SERVER ACTIONS ---
 async function deleteStaff(id_staff: number) {
   'use server';
   await prisma.staff.delete({ where: { id: id_staff } });
   revalidatePath('/staff');
-  // No redirect needed as we are on the list page
 }
 
 export default async function StaffPage() {
@@ -46,8 +43,8 @@ export default async function StaffPage() {
                     <tr key={person.id} className="border-b hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium text-gray-900">{person.nombre_completo}</td>
                       <td className="px-6 py-4 text-gray-600">{person.email}</td>
-                      <td className="px-6 py-4 text-gray-600">{person.rol ?? 'N/A'}</td>
-                      <td className="px-6 py-4 flex gap-2"> {/* Added flex gap for buttons */}
+                      <td className="px-6 py-4 text-gray-600">{person.rol_staff ?? 'N/A'}</td>
+                      <td className="px-6 py-4 flex gap-2">
                         <Link href={`/staff/${person.id}/editar`} className="text-blue-600 hover:underline">
                           Editar
                         </Link>

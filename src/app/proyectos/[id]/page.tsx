@@ -31,6 +31,7 @@ export default async function ProyectoDetailPage({ params }: DetailPageProps) {
     return notFound();
   }
 
+  // Fetch data sequentially
   const proyecto = await prisma.proyecto.findUnique({
     where: { id },
     include: {
@@ -60,12 +61,9 @@ export default async function ProyectoDetailPage({ params }: DetailPageProps) {
   const assignedStaffIds = new Set(proyecto.staff.map(s => s.id_staff));
   const availableStaff = allStaff.filter(s => !assignedStaffIds.has(s.id));
 
-  // Fetch lookup data for technology form
-  const [controlVersiones, statusPmo, statusSalud] = await Promise.all([
-    prisma.controlVersiones.findMany({ orderBy: { nombre: 'asc' } }),
-    prisma.statusPmo.findMany({ orderBy: { nombre: 'asc' } }),
-    prisma.statusSalud.findMany({ orderBy: { nombre: 'asc' } }),
-  ]);
+  const controlVersiones = await prisma.controlVersiones.findMany({ orderBy: { nombre: 'asc' } });
+  const statusPmo = await prisma.statusPmo.findMany({ orderBy: { nombre: 'asc' } });
+  const statusSalud = await prisma.statusSalud.findMany({ orderBy: { nombre: 'asc' } });
 
   const deleteProjectWithId = deleteProject.bind(null, proyecto.id);
   const createOrUpdateTecnologiaWithId = createOrUpdateTecnologia.bind(null, proyecto.id);
@@ -161,7 +159,7 @@ export default async function ProyectoDetailPage({ params }: DetailPageProps) {
                             <li key={s.id_staff} className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
                                 <div>
                                     <p className="text-sm font-medium text-gray-900">{s.staff.nombre_completo}</p>
-                                    <p className="text-xs text-gray-500">{s.staff.rol}</p>
+                                    <p className="text-xs text-gray-500">{s.staff.rol_staff}</p>
                                 </div>
                                 <form action={unassignStaff}>
                                     <input type="hidden" name="id_proyecto" value={proyecto.id} />

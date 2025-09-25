@@ -26,7 +26,7 @@ const toISOStringOrNull = (str: string) => {
 async function main() {
   console.log(`Start importing staff...`);
 
-  const filePath = path.join(process.cwd(), '../staff_template.csv');
+  const filePath = path.join(process.cwd(), '../staff.csv');
 
   if (!fs.existsSync(filePath)) {
     console.error(`File not found at ${filePath}`);

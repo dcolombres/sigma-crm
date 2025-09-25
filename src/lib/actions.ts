@@ -123,7 +123,7 @@ export async function updateApiKey(prevState: any, formData: FormData) {
   }
 
   try {
-    await prisma.staff.update({
+    await prisma.user.update({
       where: { id: userId },
       data: { 
         redmine_api_key: redmineApiKey,
@@ -344,4 +344,25 @@ export async function sendTestTelegramMessage(botToken: string, chatId: string) 
     console.error(error);
     return { status: 'error', message: 'Error al enviar el mensaje de prueba.' };
   }
+}
+
+export async function searchProjects(query: string) {
+  if (!query) {
+    return [];
+  }
+
+  const projects = await prisma.proyecto.findMany({
+    where: {
+      titulo: {
+        contains: query,
+      },
+    },
+    take: 10, // Limit the number of results
+    select: {
+      id: true,
+      titulo: true,
+    },
+  });
+
+  return projects;
 }

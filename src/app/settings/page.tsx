@@ -5,7 +5,7 @@ import { SettingsForm } from '@/components/SettingsForm';
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
-  const user = await prisma.staff.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
 

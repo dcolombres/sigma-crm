@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const user = await prisma.staff.findUnique({ where: { email: session.user.email } });
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
 
   if (!user || !user.caldav_url || !user.caldav_username || !user.caldav_password) {
     return NextResponse.json({ error: 'CalDAV URL, username, or password not configured.' }, { status: 401 });

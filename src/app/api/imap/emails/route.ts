@@ -12,7 +12,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const user = await prisma.staff.findUnique({ where: { email: session.user.email } });
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
 
   if (!user || !user.imap_host || !user.imap_port || !user.zimbra_username || !user.zimbra_password) {
     return NextResponse.json({ error: 'IMAP settings not configured.' }, { status: 401 });
