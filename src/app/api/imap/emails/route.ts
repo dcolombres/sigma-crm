@@ -70,7 +70,7 @@ export async function GET() {
                 stream.once('end', () => {
                   simpleParser(buffer, (err, parsed) => {
                     if (err) {
-                      // ignore parsing errors
+                      // ignorar errores de análisis
                     } else {
                       emails.push({
                         from: parsed.from?.text,
@@ -90,7 +90,7 @@ export async function GET() {
 
             f.once('end', () => {
               imap.end();
-              // Sort by date descending to be sure
+              // Ordenar por fecha descendente para estar seguros
               emails.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
               resolve(emails);
             });

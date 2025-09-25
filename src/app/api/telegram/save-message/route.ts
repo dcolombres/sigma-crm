@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
         message_id: message_id,
         chat_id: String(chat_id),
         text: text,
-        date: new Date(date * 1000), // Telegram date is a Unix timestamp
+        date: new Date(date * 1000), // La fecha de Telegram es una marca de tiempo Unix
       },
     });
 

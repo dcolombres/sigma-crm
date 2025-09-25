@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-  // For now, we just return a success message.
-  // Later, we will implement session clearing.
+  // Por ahora, solo devolvemos un mensaje de éxito.
+  // Más adelante, implementaremos el borrado de la sesión.
   return NextResponse.json({ message: 'Logout successful' });
 }

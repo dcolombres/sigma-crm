@@ -256,7 +256,7 @@ export async function validateGlpiApiKey(url: string, apiKey: string) {
     if (response.ok) {
       const sessionData = await response.json();
       if (sessionData.session_token) {
-        // Kill session immediately after validation
+        // Cerrar la sesión inmediatamente después de la validación
         await fetch(`${apiUrl}/killSession`, {
           method: 'GET',
           headers: {
@@ -357,7 +357,7 @@ export async function searchProjects(query: string) {
         contains: query,
       },
     },
-    take: 10, // Limit the number of results
+    take: 10, // Limitar el número de resultados
     select: {
       id: true,
       titulo: true,

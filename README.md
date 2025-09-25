@@ -1,24 +1,131 @@
+# SIGMA CRM
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-First, run the development server:
+This guide will walk you through the process of setting up the project for local development.
+
+### 1. Prerequisites
+
+Before you begin, ensure you have the following installed on your system:
+
+- [Node.js](https://nodejs.org/) (version 18 or higher)
+- [npm](https://www.npmjs.com/) (which comes with Node.js)
+
+### 2. Clone the Repository
+
+First, clone the project repository to your local machine:
+
+```bash
+git clone https://github.com/dcolombres/sigma-crm.git
+cd sigma-crm
+```
+
+### 3. Install Dependencies
+
+Next, install all the project dependencies using npm:
+
+```bash
+npm install
+```
+
+This command will download and install all the necessary packages defined in the `package.json` file.
+
+### 4. Set Up Environment Variables
+
+The project uses a `.env` file to manage environment variables. You will need to create this file in the root of the project.
+
+Create a file named `.env` and add the following content:
+
+```
+# NextAuth.js configuration
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=http://localhost:3000
+
+# Database configuration
+DATABASE_URL=file:./dev.db
+```
+
+**Explanation of the variables:**
+
+- **`NEXTAUTH_SECRET`**: This is a secret key used by NextAuth.js to sign and encrypt cookies and tokens. You can generate a secure secret by running the following command in your terminal:
+
+  ```bash
+  openssl rand -hex 32
+  ```
+
+  Copy the output of the command and paste it after `NEXTAUTH_SECRET=`.
+
+- **`NEXTAUTH_URL`**: This is the base URL of your application. For local development, it should be `http://localhost:3000`.
+
+- **`DATABASE_URL`**: This is the connection string for your database. For local development, we are using a SQLite database, and the value should be `file:./dev.db`.
+
+### 5. Set Up the Database
+
+The project uses [Prisma](https://www.prisma.io/) as an ORM to interact with the database. To set up the database, you need to run the following command:
+
+```bash
+npx prisma migrate dev
+```
+
+This command will:
+
+- Create the SQLite database file (`dev.db`) in the `prisma` directory.
+- Apply all the migrations from the `prisma/migrations` directory to the database.
+- Run the `prisma/seed.ts` script to populate the database with initial data, including users, projects, and other lookup tables.
+
+### 6. Run the Application
+
+Now that you have completed the setup, you can run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will start the application on `http://localhost:3000`. Open this URL in your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Importing Staff Data
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The `staff_template.csv` file contains all the configuration columns, and the `prisma/import_staff.ts` script can read them, handle optional values, and update existing users if the email already exists. To use it, open `staff_template.csv` in `/Users/dcolom/DSIGMA/`, fill in the data (only `nombre_completo` and `email` are required), and run:
+
+```bash
+npm run import:staff
+```
+
+This will allow for more complete bulk management.
+
+## Troubleshooting
+
+If you encounter any issues, you can try the following commands:
+
+- **Reset `node_modules` and `package-lock.json`:**
+  ```bash
+  # For macOS and Linux
+  rm -rf node_modules package-lock.json
+  
+  # For Windows PowerShell
+  Remove-Item -Recurse -Force node_modules
+  Remove-Item -Force package-lock.json
+  
+  npm install
+  ```
+
+- **Reset the database:**
+  ```bash
+  npx prisma migrate reset
+  ```
+
+- **Reset the Next.js cache:**
+  ```bash
+  # For macOS and Linux
+  rm -rf .next
+  
+  # For Windows PowerShell
+  Remove-Item -Recurse -Force .next
+  
+  npm run dev
+  ```
 
 ## Learn More
 
@@ -34,13 +141,3 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-
-
-## Plantilla importacion staff
-
-staff_template.csv contiene todas las columnas de configuración, y el script prisma/import_staff.ts puede leerlas, manejar valores opcionales y actualizar usuarios existentes si el email ya existe. Para usarlo, abre el staff_template.csv en /Users/dcolom/DSIGMA/, rellena los datos (solo nombre_completo y email son obligatorios) y ejecuta
-   
-npm run import:staff
-
-Esto te permitirá una gestión masiva más completa.

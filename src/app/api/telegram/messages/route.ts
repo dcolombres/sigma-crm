@@ -29,7 +29,7 @@ export async function GET() {
       take: 10,
     });
 
-    // The frontend expects a 'result' property with the messages
+    // El frontend espera una propiedad 'result' con los mensajes
     return NextResponse.json({ ok: true, result: messages });
 
   } catch (error) {

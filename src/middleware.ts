@@ -1,10 +1,10 @@
 import { withAuth } from "next-auth/middleware"
 
-// More on how NextAuth.js middleware works:
+// Más información sobre cómo funciona el middleware de NextAuth.js:
 // https://next-auth.js.org/configuration/nextjs#middleware
 export default withAuth(
   function middleware(req) {
-    // You can insert custom logic here if needed
+    // Puedes insertar lógica personalizada aquí si es necesario
   },
   {
     callbacks: {
@@ -16,10 +16,10 @@ export default withAuth(
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api/auth (authentication routes)
-     * - api/telegram/save-message (public webhook)
-     * - login (the login page)
+     * Coincidir con todas las rutas de solicitud excepto las que comienzan con:
+     * - api/auth (rutas de autenticación)
+     * - api/telegram/save-message (webhook público)
+     * - login (la página de inicio de sesión)
      */
     '/((?!api/auth|api/telegram/save-message|login).*)',
   ],

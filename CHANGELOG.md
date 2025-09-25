@@ -1,51 +1,51 @@
-# Changelog
+# Historial de Cambios
 
-All notable changes to this project will be documented in this file.
+Todos los cambios notables en este proyecto serán documentados en este archivo.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+El formato se basa en [Mantén un Changelog](https://keepachangelog.com/en/1.0.0/),
+y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
 ## [1.0.0] - 2025-09-25
 
-### Added
-- **Project Initialization:** Properly initialized Git repository within the project directory.
-- **Database Seeding:**
-    - Added seeding for a comprehensive list of Project titles.
-    - Added seeding for a complete example Project with all its relations.
-    - Added seeding for an example Client and an example Integration.
-- **Dashboard Analytics:**
-    - Implemented four global statistic charts on the Dashboard: Staff Roles, Infrastructure, Databases, and Tiers.
-- **Form Features:**
-    - Implemented a multi-select input to assign Projects to Staff members.
-    - Implemented multi-select inputs to assign Languages and Databases to Projects.
-    - Implemented image deletion functionality for the project screenshot.
+### Agregado
+- **Inicialización del Proyecto:** Se inicializó correctamente el repositorio de Git dentro del directorio del proyecto.
+- **Siembra de Datos (Seeding):**
+    - Se agregó la siembra de datos para una lista completa de títulos de Proyectos.
+    - Se agregó la siembra de datos para un Proyecto de ejemplo completo con todas sus relaciones.
+    - Se agregó la siembra de datos para un Cliente y una Integración de ejemplo.
+- **Análisis del Dashboard:**
+    - Se implementaron cuatro gráficos de estadísticas globales en el Dashboard: Roles de Personal, Infraestructura, Bases de Datos y Tiers.
+- **Funcionalidades de Formularios:**
+    - Se implementó una entrada de selección múltiple para asignar Proyectos a los miembros del Personal.
+    - Se implementaron entradas de selección múltiple para asignar Lenguajes y Bases de Datos a los Proyectos.
+    - Se implementó la funcionalidad de eliminación de imágenes para la captura de pantalla del proyecto.
 
-### Changed
-- **Layout:** Refactored the application layout from a vertical sidebar to a horizontal top navigation bar.
-- **Dashboard Layout:**
-    - Changed user-specific cards (Redmine, IMAP, etc.) to a single-column, full-width layout.
-    - Changed the "Staff Roles" chart from a Pie chart to a horizontal Bar chart for better readability.
-- **Staff Edit Form:**
-    - Expanded the form to include all fields from the `Staff` model.
-    - `nombre_completo` is now automatically generated from `nombres` and `apellidos`.
-    - `edad` is now automatically calculated from the date of birth (`cumpleanos`).
-- **Project Edit Form:**
-    - Improved UX for the screenshot upload functionality by showing the current image and adding a delete option.
-- **Styling:** Reverted a major UI/UX overhaul attempt and restored the original, functional styling as a baseline for the new horizontal layout.
+### Cambiado
+- **Diseño:** Se refactorizó el diseño de la aplicación de una barra lateral vertical a una barra de navegación superior horizontal.
+- **Diseño del Dashboard:**
+    - Se cambiaron las tarjetas específicas del usuario (Redmine, IMAP, etc.) a un diseño de una sola columna y ancho completo.
+    - Se cambió el gráfico de "Roles de Personal" de un gráfico circular a un gráfico de barras horizontales para una mejor legibilidad.
+- **Formulario de Edición de Personal:**
+    - Se expandió el formulario para incluir todos los campos del modelo `Staff`.
+    - `nombre_completo` ahora se genera automáticamente a partir de `nombres` y `apellidos`.
+    - `edad` ahora se calcula automáticamente a partir de la fecha de nacimiento (`cumpleanos`).
+- **Formulario de Edición de Proyecto:**
+    - Se mejoró la experiencia de usuario para la funcionalidad de carga de capturas de pantalla al mostrar la imagen actual y agregar una opción de eliminación.
+- **Estilos:** Se revirtió un intento de revisión mayor de la interfaz de usuario/experiencia de usuario y se restauraron los estilos originales y funcionales como base para el nuevo diseño horizontal.
 
-### Fixed
-- **Database & Login:**
-    - Resolved critical login and data display errors by correcting the database schema, cleaning up duplicate database files, and fixing incorrect environment variable paths.
-- **Model Usage:**
-    - Corrected a recurring bug across the application (Settings, IMAP API, CalDAV API) where the `Staff` model was being used to query user-specific settings instead of the `User` model.
-- **Build & Dependencies:**
-    - Resolved build errors by installing missing dependencies (`@mui/x-charts`, `@emotion/react`, `@emotion/styled`).
-    - Fixed incorrect import paths for chart components.
-    - Fixed a build error caused by incorrect placement of the `'use client'` directive by refactoring the component structure.
-- **Data Integrity:**
-    - Corrected a bug where the `rol` field was being used instead of `rol_staff` in the Staff list and edit pages.
-    - Made the image upload logic more robust to prevent incorrect `null` values from being saved to the database.
-- **Navigation:** Fixed a major UI bug ("giant icons") that made the application unusable by reverting flawed styling changes.
+### Corregido
+- **Base de Datos e Inicio de Sesión:**
+    - Se resolvieron errores críticos de inicio de sesión y visualización de datos corrigiendo el esquema de la base de datos, limpiando archivos de base de datos duplicados y corrigiendo rutas de variables de entorno incorrectas.
+- **Uso de Modelos:**
+    - Se corrigió un error recurrente en toda la aplicación (Configuración, API de IMAP, API de CalDAV) donde se utilizaba el modelo `Staff` para consultar la configuración específica del usuario en lugar del modelo `User`.
+- **Compilación y Dependencias:**
+    - Se resolvieron errores de compilación instalando las dependencias que faltaban (`@mui/x-charts`, `@emotion/react`, `@emotion/styled`).
+    - Se corrigieron las rutas de importación incorrectas para los componentes de gráficos.
+    - Se corrigió un error de compilación causado por la ubicación incorrecta de la directiva `'use client'` al refactorizar la estructura de los componentes.
+- **Integridad de los Datos:**
+    - Se corrigió un error donde se utilizaba el campo `rol` en lugar de `rol_staff` en la lista y las páginas de edición del Personal.
+    - Se hizo más robusta la lógica de carga de imágenes para evitar que se guardaran valores `null` incorrectos en la base de datos.
+- **Navegación:** Se corrigió un error importante de la interfaz de usuario ("íconos gigantes") que hacía que la aplicación fuera inutilizable al revertir los cambios de estilo defectuosos.
 
-### Removed
-- **Redundant Directories:** Cleaned up nested and unnecessary `prisma` directories.
+### Eliminado
+- **Directorios Redundantes:** Se limpiaron los directorios `prisma` anidados e innecesarios.
