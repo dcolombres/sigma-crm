@@ -1,0 +1,1 @@
+Referencia CRM para proyectos https://themesbrand.com/skote/layouts/index.html y https://themesbrand.com/skote/layouts/layouts-horizontal.html 

@@ -1,0 +1,65 @@
+'use client';
+
+import { useEffect, useState, useCallback } from 'react';
+import Link from 'next/link';
+
+export function RedmineIssues({ refreshing }) {
+  const [issues, setIssues] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchIssues = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/redmine/issues');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch issues');
+      }
+      const data = await response.json();
+      setIssues(data.issues);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchIssues();
+  }, [fetchIssues]);
+
+  useEffect(() => {
+    if (refreshing) {
+      fetchIssues();
+    }
+  }, [refreshing, fetchIssues]);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return (
+      <div>
+        <p className="text-red-500">{error}</p>
+        <Link href="/settings" className="text-blue-500 hover:underline">
+          Configure your Redmine API key
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <ul>
+      {issues.map((issue: any) => (
+        <li key={issue.id} className="mb-2">
+          <a href={`https://redmine.produccion.gob.ar/issues/${issue.id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
+            #{issue.id}: {issue.subject}
+          </a>
+        </li>
+      ))}
+    </ul>
+  );
+}

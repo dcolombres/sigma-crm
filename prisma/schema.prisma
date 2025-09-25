@@ -1,0 +1,270 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// --- Lookup Tables ---
+
+model Dependencia {
+  id              Int        @id @default(autoincrement())
+  nombre          String     @unique
+  proyectosOrigen Proyecto[] @relation("ProyectoOrigen")
+  proyectosActual Proyecto[] @relation("ProyectoActual")
+}
+
+model Categoria {
+  id            Int            @id @default(autoincrement())
+  nombre        String         @unique
+  proyectos     Proyecto[]
+  subcategorias Subcategoria[]
+}
+
+model Subcategoria {
+  id           Int        @id @default(autoincrement())
+  nombre       String     @unique
+  id_categoria Int?
+  categoria    Categoria? @relation(fields: [id_categoria], references: [id])
+  proyectos    Proyecto[]
+}
+
+model ControlVersiones {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @unique
+  tecnologias Tecnologia[]
+}
+
+model StatusPmo {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @unique
+  tecnologias Tecnologia[]
+}
+
+model StatusSalud {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @unique
+  tecnologias Tecnologia[]
+}
+
+model Lenguaje {
+  id        Int                @id @default(autoincrement())
+  nombre    String             @unique
+  proyectos ProyectoLenguaje[]
+}
+
+model BaseDeDatos {
+  id        Int                   @id @default(autoincrement())
+  nombre    String                @unique
+  proyectos ProyectoBaseDeDatos[]
+}
+
+// --- System User Model ---
+model User {
+  id                       Int      @id @default(autoincrement())
+  email                    String   @unique
+  password                 String?
+  rol                      String?
+  staffId                  Int?     @unique
+  staff                    Staff?   @relation(fields: [staffId], references: [id])
+  redmine_api_key          String?
+  redmine_url              String?
+  gitlab_api_key           String?
+  gitlab_url               String?
+  telegram_bot_token       String?
+  telegram_chat_id         String?
+  glpi_api_key             String?
+  glpi_url                 String?
+  zimbra_username          String?
+  zimbra_password          String?
+  caldav_url               String?
+  caldav_username          String?
+  caldav_password          String?
+  imap_host                String?
+  imap_port                Int?
+  imap_ssl                 Boolean?
+  dashboard_card_visibility Json?
+}
+
+// --- Staff Model (from CSV) ---
+model Staff {
+  id                 Int             @id @default(autoincrement())
+  nombre_completo    String
+  contrato           String?
+  rol_staff          String?         @map("rol")
+  nombres            String?
+  apellidos          String?
+  activo             Boolean?
+  comentario         String?
+  proyectos_q        Int?
+  modalidad          String?
+  experiencia        String?
+  origen             String?
+  email              String          @unique
+  skills             String?
+  desempeno_ley_dto  String?
+  hhee               Boolean?
+  ur                 Boolean?
+  coordinacion       String?
+  presencialidad     String?
+  cumpleanos         DateTime?
+  edad               Int?
+  user               User?
+  proyectos          ProyectoStaff[]
+  integraciones      Integracion[]
+}
+
+
+// New Lookup Tables for Alojamiento
+model AlojamientoInfra {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @unique
+  tecnologias Tecnologia[] @relation("AlojamientoInfra")
+}
+
+model AlojamientoInfraDB {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @unique
+  tecnologias Tecnologia[] @relation("AlojamientoInfraDB")
+}
+
+
+// --- Main Entities ---
+
+model Proyecto {
+  id                    Int                     @id @default(autoincrement())
+  titulo                String
+  storyline             String?
+  activo                Boolean?                @default(true)
+  id_dependencia_origen Int?
+  id_dependencia_actual Int?
+  id_categoria          Int?
+  id_subcategoria       Int?
+  url_captura           String?
+  url_caratula          String?
+  url_ticketera_interna String?
+  url_ticketera_externa String?
+  tier                  Int?
+  urls                  String?
+  cantidad_recursos_asignados Int?
+
+  dependenciaOrigen     Dependencia?          @relation("ProyectoOrigen", fields: [id_dependencia_origen], references: [id])
+  dependenciaActual     Dependencia?          @relation("ProyectoActual", fields: [id_dependencia_actual], references: [id])
+  categoria             Categoria?            @relation(fields: [id_categoria], references: [id])
+  subcategoria          Subcategoria?         @relation(fields: [id_subcategoria], references: [id])
+  tecnologia            Tecnologia?
+  clientes              Cliente[]
+  staff                 ProyectoStaff[]
+  integraciones         ProyectoIntegracion[]
+  lenguajes             ProyectoLenguaje[]
+  bases_de_datos        ProyectoBaseDeDatos[]
+}
+
+model Cliente {
+  id                      Int       @id @default(autoincrement())
+  id_proyecto             Int
+  nombre                  String
+  email                   String?
+  celular                 String?
+  observacion             String?
+  fecha_inicio_desarrollo DateTime?
+  activo                  Boolean?  @default(true)
+  proyecto                Proyecto  @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
+  integraciones           ClienteIntegracion[]
+}
+
+model Tecnologia {
+  id                   Int      @id @default(autoincrement())
+  id_proyecto          Int      @unique
+  id_control_versiones Int?
+  changelog            Boolean? @default(false)
+  url_changelog        String?
+  id_alojamiento_infra Int?
+  alojamientoInfra     AlojamientoInfra? @relation("AlojamientoInfra", fields: [id_alojamiento_infra], references: [id])
+  id_alojamiento_infra_db Int?
+  alojamientoInfraDB   AlojamientoInfraDB? @relation("AlojamientoInfraDB", fields: [id_alojamiento_infra_db], references: [id])
+
+  mantenimiento_soporte Boolean? @default(false)
+  id_status_pmo        Int?
+  id_status_salud      Int?
+  anio_inicio_sistema  Int?
+  usuarios_internos    Int?     @default(0)
+  usuarios_externos    Int?     @default(0)
+
+  proyecto         Proyecto          @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
+  controlVersiones ControlVersiones? @relation(fields: [id_control_versiones], references: [id])
+  statusPmo        StatusPmo?        @relation(fields: [id_status_pmo], references: [id])
+  statusSalud      StatusSalud?      @relation(fields: [id_status_salud], references: [id])
+}
+
+model Integracion {
+  id                Int                   @id @default(autoincrement())
+  nombre            String
+  funcion_principal String?
+  documentacion     String?
+  id_responsable    Int?
+  responsable       Staff?                @relation(fields: [id_responsable], references: [id])
+  proyectos         ProyectoIntegracion[]
+  clientes          ClienteIntegracion[]
+}
+
+// --- Join Tables for Many-to-Many ---
+
+model ProyectoStaff {
+  proyecto    Proyecto @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
+  id_proyecto Int
+  staff       Staff    @relation(fields: [id_staff], references: [id], onDelete: Cascade)
+  id_staff    Int
+
+  @@id([id_proyecto, id_staff])
+}
+
+model ProyectoIntegracion {
+  proyecto       Proyecto    @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
+  id_proyecto    Int
+  integracion    Integracion @relation(fields: [id_integracion], references: [id], onDelete: Cascade)
+  id_integracion Int
+
+  @@id([id_proyecto, id_integracion])
+}
+
+model ClienteIntegracion {
+  cliente        Cliente     @relation(fields: [id_cliente], references: [id], onDelete: Cascade)
+  id_cliente     Int
+  integracion    Integracion @relation(fields: [id_integracion], references: [id], onDelete: Cascade)
+  id_integracion Int
+
+  @@id([id_cliente, id_integracion])
+}
+
+model ProyectoLenguaje {
+  proyecto    Proyecto @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
+  id_proyecto Int
+  lenguaje    Lenguaje @relation(fields: [id_lenguaje], references: [id], onDelete: Cascade)
+  id_lenguaje Int
+
+  @@id([id_proyecto, id_lenguaje])
+}
+
+model ProyectoBaseDeDatos {
+  proyecto         Proyecto    @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
+  id_proyecto      Int
+  base_de_datos    BaseDeDatos @relation(fields: [id_base_de_datos], references: [id], onDelete: Cascade)
+  id_base_de_datos Int
+
+  @@id([id_proyecto, id_base_de_datos])
+}
+
+model TelegramMessage {
+  id         Int      @id @default(autoincrement())
+  message_id Int
+  chat_id    String
+  text       String
+  date       DateTime
+  created_at DateTime @default(now())
+}
