@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getNumberOrNull } from '@/lib/utils';
 import ProyectoEditForm from '@/components/ProyectoEditForm';
-import { handleFileUpload, getRelationUpdate, getManyToManyRelationUpdate } from '@/lib/form-helpers';
+import { handleFileUpload, getRelationUpdate, getLenguajeRelationUpdate, getBaseDeDatosRelationUpdate } from '@/lib/form-helpers';
 
 // Server Action to update a project
 async function updateProject(id_proyecto: number, prevState: { message: string | null; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
@@ -35,8 +35,8 @@ async function updateProject(id_proyecto: number, prevState: { message: string |
       dependenciaActual: getRelationUpdate(formData, 'id_dependencia_actual'),
       categoria: getRelationUpdate(formData, 'id_categoria'),
       subcategoria: getRelationUpdate(formData, 'id_subcategoria'),
-      lenguajes: getManyToManyRelationUpdate(lenguajeIds, 'lenguaje'),
-      bases_de_datos: getManyToManyRelationUpdate(baseDeDatosIds, 'base_de_datos'),
+      lenguajes: getLenguajeRelationUpdate(lenguajeIds),
+      bases_de_datos: getBaseDeDatosRelationUpdate(baseDeDatosIds),
     };
 
     // Conditionally add image data to the update object
@@ -63,8 +63,9 @@ async function updateProject(id_proyecto: number, prevState: { message: string |
   }
 }
 
-export default async function EditarProyectoPage({ params }: { params: { id: string } }) {
-  const id = Number(params.id);
+export default async function EditarProyectoPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const id = Number(resolvedParams.id);
   if (isNaN(id)) return notFound();
 
   const proyecto = await prisma.proyecto.findUnique({

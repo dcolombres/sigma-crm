@@ -86,7 +86,7 @@ async function main() {
 
   // Seed Dependencias
   const dependencias = [
-    'Industria', 'Pyme', 'Produccion', 'Energia', 'Mineria', 'Magyp', 'Inti', 'INPI', 'Ec del Conocimiento', 'Comercio', 'Pesca', 'otro'
+    'Industria', 'Pyme', 'Produccion', 'Energia', 'Mineria', 'Magyp', 'Inti', 'INPI', 'Ec del Conocimiento', 'Comercio', 'Pesca', 'Def. del Consumidor', 'otro'
   ];
   for (const nombre of dependencias) {
     await prisma.dependencia.upsert({

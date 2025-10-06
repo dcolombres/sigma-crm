@@ -3,9 +3,10 @@ import Link from 'next/link';
 import { createClient } from '@/lib/actions';
 import ClienteNewForm from '@/components/ClienteNewForm';
 
-export default async function NuevoClientePage({ searchParams }: { searchParams: { id_proyecto?: string } }) {
+export default async function NuevoClientePage({ searchParams }: { searchParams: Promise<{ id_proyecto?: string }> }) {
+  const resolvedSearchParams = await searchParams;
   const proyectos = await prisma.proyecto.findMany({ orderBy: { titulo: 'asc' } });
-  const preselectedProjectId = searchParams.id_proyecto;
+  const preselectedProjectId = resolvedSearchParams.id_proyecto;
 
   return (
     <main className="flex flex-col items-center min-h-screen p-8 bg-background">

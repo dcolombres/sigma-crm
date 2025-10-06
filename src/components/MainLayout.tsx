@@ -4,7 +4,6 @@ import { usePathname } from 'next/navigation';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import { ToastProvider } from './ToastProvider';
-import Breadcrumbs from './Breadcrumbs';
 import { ReactNode, useState } from 'react';
 
 export default function MainLayout({ children }: { children: ReactNode }) {
@@ -31,7 +30,6 @@ export default function MainLayout({ children }: { children: ReactNode }) {
         <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
           <Topbar />
           <main className="p-8">
-            <Breadcrumbs />
             {children}
           </main>
         </div>

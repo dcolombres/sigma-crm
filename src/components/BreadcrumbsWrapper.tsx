@@ -22,7 +22,7 @@ const getEntityName = async (segment: string, id: number) => {
 };
 
 export default async function BreadcrumbsWrapper() {
-  const headersList = headers();
+  const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '';
   const pathSegments = pathname.split('/').filter(segment => segment);
 

@@ -15,7 +15,7 @@ async function createProject(prevState: { message: string; error: boolean; proje
       return { message: 'El título es un campo obligatorio.', error: true };
     }
 
-    const { captura_data, captura_type, error: fileError } = await handleFileUpload(formData);
+    const { capturaData, capturaType, error: fileError } = await handleFileUpload(formData);
     if (fileError) {
       return { message: fileError, error: true };
     }
@@ -29,8 +29,8 @@ async function createProject(prevState: { message: string; error: boolean; proje
       categoria: getRelationCreate(formData, 'id_categoria'),
       subcategoria: getRelationCreate(formData, 'id_subcategoria'),
       tier: getNumberOrNull(formData.get('tier')),
-      captura_data: captura_data,
-      captura_type: captura_type,
+      captura_data: capturaData,
+      captura_type: capturaType,
       url_ticketera_interna: formData.get('url_ticketera_interna') as string,
       url_ticketera_externa: formData.get('url_ticketera_externa') as string,
     };

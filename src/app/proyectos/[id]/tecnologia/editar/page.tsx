@@ -5,13 +5,9 @@ import Link from 'next/link';
 // Import the server action from the project details page
 import { TecnologiaForm } from '@/components/TecnologiaForm';
 
-interface EditPageProps {
-  params: { id: string };
-}
-
-// Import the server action from the project details page
-export default async function EditarTecnologiaPage({ params }: EditPageProps) {
-  const id_proyecto = Number(params.id);
+export default async function EditarTecnologiaPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = await params;
+  const id_proyecto = Number(resolvedParams.id);
   if (isNaN(id_proyecto)) return notFound();
 
   const [tecnologia, controlVersiones, statusPmo, statusSalud, alojamientoInfra, alojamientoInfraDB] = await Promise.all([

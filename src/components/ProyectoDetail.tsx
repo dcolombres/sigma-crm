@@ -41,7 +41,7 @@ const ProyectoPrintable = ({ proyecto }: { proyecto: ProyectoDetailProps['proyec
     liSpan: { fontWeight: '600' },
   };
 
-  const PrintableDetailItem = ({ label, value }) => {
+  const PrintableDetailItem = ({ label, value }: { label: string, value: React.ReactNode }) => {
     if (value === null || value === undefined || value === '') return null;
     return (
       <div>

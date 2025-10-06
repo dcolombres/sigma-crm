@@ -40,9 +40,16 @@ export function getRelationCreate(formData: FormData, fieldName: string) {
   return id ? { connect: { id } } : undefined;
 }
 
-export function getManyToManyRelationUpdate(ids: number[], innerRelationName: string) {
+export function getLenguajeRelationUpdate(ids: number[]) {
   return {
     deleteMany: {},
-    create: ids.map(id => ({ [innerRelationName]: { connect: { id } } }))
+    create: ids.map(id => ({ lenguaje: { connect: { id } } }))
+  };
+}
+
+export function getBaseDeDatosRelationUpdate(ids: number[]) {
+  return {
+    deleteMany: {},
+    create: ids.map(id => ({ base_de_datos: { connect: { id } } }))
   };
 }

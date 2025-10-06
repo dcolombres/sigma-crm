@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 
-export function RedmineIssues({ refreshing }) {
+export function RedmineIssues({ refreshing }: { refreshing: boolean }) {
   const [issues, setIssues] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +20,11 @@ export function RedmineIssues({ refreshing }) {
       const data = await response.json();
       setIssues(data.issues);
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }

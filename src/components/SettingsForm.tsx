@@ -8,7 +8,7 @@ import { User } from '@prisma/client';
 
 export function SettingsForm({ user }: { user: User }) {
   const [state, formAction] = useFormState(updateApiKey, null);
-  const formRef = useRef<HTMLHTMLFormElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const [redmineApiKey, setRedmineApiKey] = useState(user.redmine_api_key || '');
   const [redmineUrl, setRedmineUrl] = useState(user.redmine_url || '');
   const [gitlabApiKey, setGitlabApiKey] = useState(user.gitlab_api_key || '');
