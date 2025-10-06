@@ -2,8 +2,11 @@
 
 import { Toaster } from 'react-hot-toast';
 
-const ToastProvider = () => {
-  return <Toaster />;
-};
-
-export default ToastProvider;
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      {children}
+      <Toaster />
+    </>
+  );
+}

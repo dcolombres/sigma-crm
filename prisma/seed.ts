@@ -283,8 +283,6 @@ async function main() {
                 id_dependencia_actual: dependenciaOrigen.id,
                 id_categoria: categoria.id,
                 id_subcategoria: subcategoria.id,
-                url_captura: 'https://example.com/captura.png',
-                url_caratula: 'https://example.com/caratula.png',
                 url_ticketera_interna: 'https://jira.example.com/SIGMA',
                 url_ticketera_externa: 'https://servicedesk.example.com/SIGMA',
                 tier: 1,

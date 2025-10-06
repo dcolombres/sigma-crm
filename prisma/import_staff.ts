@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -105,10 +106,11 @@ async function main() {
       // Create a corresponding user if it doesn't exist
       const user = await prisma.user.findUnique({ where: { email } });
       if (!user) {
+        const hashedPassword = await bcrypt.hash('password', 10); // Hash the default password
         await prisma.user.create({
           data: {
             email: email,
-            password: 'password', // Default password, user should change it
+            password: hashedPassword, // Store the hashed password
             rol: rol_staff || 'user', // Use staff role as user role, or default to 'user'
             staffId: staff.id,
           },

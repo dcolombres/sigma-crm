@@ -3,7 +3,7 @@ import { withAuth } from "next-auth/middleware"
 // Más información sobre cómo funciona el middleware de NextAuth.js:
 // https://next-auth.js.org/configuration/nextjs#middleware
 export default withAuth(
-  function middleware(req) {
+  function middleware() {
     // Puedes insertar lógica personalizada aquí si es necesario
   },
   {

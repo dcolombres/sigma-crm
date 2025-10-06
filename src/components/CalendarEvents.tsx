@@ -14,7 +14,7 @@ interface CalendarEvent {
   end: Date;
 }
 
-export function CalendarEvents({ refreshing }) {
+export function CalendarEvents({ refreshing }: { refreshing: boolean }) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +33,7 @@ export function CalendarEvents({ refreshing }) {
       const data = await response.json();
       setEvents(data.events);
     } catch (err) {
-      setError(err.message);
+      setError((err as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -65,8 +65,8 @@ export function CalendarEvents({ refreshing }) {
   if (error) {
     return (
       <div>
-        <p className="text-red-500">Error: {error}</p>
-        <Link href="/settings" className="text-blue-500 hover:underline">
+        <p className="text-tag-red">Error: {error}</p>
+        <Link href="/settings" className="text-primary hover:underline">
           Configure your CalDAV credentials
         </Link>
       </div>

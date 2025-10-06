@@ -5,6 +5,36 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Mantén un Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-10-02
+
+### Cambiado
+- **Refactorización General:** Se refactorizaron las funcionalidades CRUD (Crear, Leer, Actualizar, Eliminar) de las secciones de Proyectos, Staff, Integraciones y Clientes para mejorar la robustez, el manejo de errores y la experiencia de usuario.
+    - Se centralizó la lógica de negocio en `src/lib/actions.ts`.
+    - Se implementó `useActionState` para un manejo de estado y errores más consistente en los formularios.
+    - Se separaron los componentes de servidor y cliente para una arquitectura más limpia.
+    - Se crearon funciones de ayuda compartidas para formularios en `src/lib/form-helpers.ts`.
+    - Se mejoraron los mensajes de error para el usuario.
+- **Seguridad (Hashing de Contraseñas):** Se implementó el hashing de contraseñas utilizando `bcryptjs` para mejorar la seguridad en:
+    - La autenticación de usuarios (`src/lib/auth.ts`).
+    - La importación inicial de personal (`prisma/import_staff.ts`).
+    - La actualización de contraseñas de usuario y credenciales de integración (`src/lib/actions.ts`).
+- **Navegación (Breadcrumbs):** Se implementaron breadcrumbs dinámicos que muestran el nombre de la entidad (en lugar del ID numérico) para Proyectos, Staff, Clientes e Integraciones, mejorando la usabilidad.
+- **Sección de Clientes:**
+    - Se hizo que el nombre del cliente en la tabla fuera clickeable, enlazando a la página de edición.
+- **Sección de Staff:**
+    - Se hizo que el nombre del miembro del staff en la tabla fuera clickeable, enlazando a la página de edición.
+- **Sección de Integraciones:**
+    - Se hizo que el nombre de la integración en la tabla fuera clickeable, enlazando a la página de edición.
+    - Se implementó la visualización de documentación en formato Markdown en la página de edición, con un botón para alternar entre vista y edición.
+    - Se configuró el plugin `@tailwindcss/typography` para un mejor estilo del Markdown.
+    - Se ajustó la página de edición de integraciones para que ocupe todo el ancho disponible.
+- **Página de Perfil:** Se añadió un formulario para que los usuarios puedan actualizar su contraseña de forma segura.
+
+### Corregido
+- **Errores de Compilación:** Se resolvieron varios errores de compilación y de tipos de TypeScript en componentes y acciones del servidor.
+- **Errores de Ejecución:** Se corrigió el error "Connection closed" que ocurría al navegar a la página de listado de proyectos, causado por un manejo incorrecto de `searchParams`.
+- **Manejo de Errores de Prisma:** Se corrigió la referencia a `PrismaClientKnownRequestError` en las acciones del servidor para un manejo de errores de base de datos más robusto.
+
 ## [1.0.0] - 2025-09-25
 
 ### Agregado

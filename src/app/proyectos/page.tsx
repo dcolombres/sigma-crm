@@ -1,70 +1,71 @@
 import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import Link from 'next/link';
+import ProyectosTable from '@/components/ProyectosTable';
 
-export default async function ProyectosPage() {
-  const proyectos = await prisma.proyecto.findMany({
-    include: {
-      categoria: true,
-      dependenciaActual: true,
-    },
-    orderBy: {
-      id: 'desc',
-    },
-  });
+function getOrderBy(sort: string, order: Prisma.SortOrder) {
+  if (sort === 'categoria') {
+    return { categoria: { nombre: order } };
+  }
+  if (sort === 'dependenciaActual') {
+    return { dependenciaActual: { nombre: order } };
+  }
+  return { [sort]: order };
+}
+
+export default async function ProyectosPage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const resolvedSearchParams = await searchParams;
+  const page = Number(resolvedSearchParams.page) || 1;
+  const perPage = 10;
+  const sort = (resolvedSearchParams.sort as string) || 'id';
+  const order = (resolvedSearchParams.order as Prisma.SortOrder) || 'desc';
+  const search = (resolvedSearchParams.search as string) || '';
+
+  const orderBy = getOrderBy(sort, order);
+
+  // Add where clause for search
+  const where: Prisma.ProyectoWhereInput = search
+    ? {
+        OR: [
+          { titulo: { contains: search } },
+          { storyline: { contains: search } },
+        ],
+      }
+    : {};
+
+  const [proyectos, count] = await Promise.all([
+    prisma.proyecto.findMany({
+      where, // Apply where clause
+      include: {
+        categoria: true,
+        dependenciaActual: true,
+        clientes: true,
+      },
+      orderBy,
+      skip: (page - 1) * perPage,
+      take: perPage,
+    }),
+    prisma.proyecto.count({ where }), // Apply where clause to count
+  ]);
 
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">Gestión de Proyectos</h1>
-        <Link href="/proyectos/nuevo" className="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+        <h1 className="text-3xl font-bold text-primary">Gestión de Proyectos</h1>
+        <Link href="/proyectos/nuevo" className="px-4 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75">
             + Crear Proyecto
         </Link>
       </div>
 
-      <div className="w-full bg-white rounded-lg shadow-md">
-        <div className="overflow-x-auto rounded-lg">
-          <table className="min-w-full text-left text-sm">
-            <thead className="border-b bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-4 font-semibold text-gray-700">Título</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-gray-700">Categoría</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-gray-700">Dependencia</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-gray-700">Estado</th>
-                <th scope="col" className="px-6 py-4 font-semibold text-gray-700">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {proyectos.length > 0 ? (
-                proyectos.map((proyecto) => (
-                  <tr key={proyecto.id} className="border-b hover:bg-gray-50">
-                    <td className="px-6 py-4 font-medium text-gray-900">{proyecto.titulo}</td>
-                    <td className="px-6 py-4 text-gray-600">{proyecto.categoria?.nombre ?? 'N/A'}</td>
-                    <td className="px-6 py-4 text-gray-600">{proyecto.dependenciaActual?.nombre ?? 'N/A'}</td>
-                    <td className="px-6 py-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        proyecto.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}>
-                        {proyecto.activo ? 'Activo' : 'Inactivo'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <Link href={`/proyectos/${proyecto.id}`} className="text-blue-600 hover:underline">
-                        Ver
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={5} className="text-center py-10 text-gray-500">
-                    No hay proyectos para mostrar. ¡Crea uno nuevo!
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <ProyectosTable
+        proyectos={proyectos}
+        count={count}
+        page={page}
+        perPage={perPage}
+        sort={sort}
+        order={order}
+        search={search} // Pass search query to table
+      />
     </div>
   );
 }

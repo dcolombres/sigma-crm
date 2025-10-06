@@ -1,10 +1,13 @@
 import prisma from '@/lib/prisma';
-import { notFound, redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
 // Import the server action from the project details page
 import { TecnologiaForm } from '@/components/TecnologiaForm';
+
+interface EditPageProps {
+  params: { id: string };
+}
 
 // Import the server action from the project details page
 export default async function EditarTecnologiaPage({ params }: EditPageProps) {
@@ -21,13 +24,13 @@ export default async function EditarTecnologiaPage({ params }: EditPageProps) {
   ]);
 
   return (
-    <main className="flex flex-col items-center min-h-screen p-8 bg-gray-100">
+    <main className="flex flex-col items-center min-h-screen p-8 bg-background">
       <div className="w-full max-w-4xl">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-primary">
             {tecnologia ? `Editar Tecnología para ${id_proyecto}` : `Añadir Tecnología al Proyecto ${id_proyecto}`}
           </h1>
-          <Link href={`/proyectos/${id_proyecto}`} className="text-sm font-medium text-blue-600 hover:underline">
+          <Link href={`/proyectos/${id_proyecto}`} className="text-sm font-medium text-primary hover:underline">
             &larr; Volver al Proyecto
           </Link>
         </div>

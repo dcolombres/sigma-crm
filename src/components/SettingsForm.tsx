@@ -1,11 +1,13 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useFormState } from 'react-dom';
 import toast from 'react-hot-toast';
 import { updateApiKey, validateApiKey, validateGitlabApiKey, validateTelegramBotToken, validateGlpiApiKey, validateCaldavCredentials, sendTestTelegramMessage } from '@/lib/actions';
+import { User } from '@prisma/client';
 
-export function SettingsForm({ user }) {
-  const [state, formAction] = useActionState(updateApiKey, null);
+export function SettingsForm({ user }: { user: User }) {
+  const [state, formAction] = useFormState(updateApiKey, null);
   const formRef = useRef<HTMLHTMLFormElement>(null);
   const [redmineApiKey, setRedmineApiKey] = useState(user.redmine_api_key || '');
   const [redmineUrl, setRedmineUrl] = useState(user.redmine_url || '');
@@ -101,7 +103,7 @@ export function SettingsForm({ user }) {
       
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Redmine</h2>
+          <h2 className="text-xl font-bold text-primary">Redmine</h2>
           <div className="flex items-center">
             <label htmlFor="redmine_enabled" className="mr-2">Enable</label>
             <input
@@ -114,19 +116,19 @@ export function SettingsForm({ user }) {
           </div>
         </div>
         <div className="mt-4">
-          <label htmlFor="redmine_url" className="block text-sm font-medium text-gray-800 mb-1">Redmine URL</label>
+          <label htmlFor="redmine_url" className="block text-sm font-medium text-primary mb-1">Redmine URL</label>
           <input
             type="text"
             name="redmine_url"
             id="redmine_url"
             value={redmineUrl}
             onChange={(e) => setRedmineUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!redmineVisible}
           />
         </div>
         <div className="mt-4">
-          <label htmlFor="redmine_api_key" className="block text-sm font-medium text-gray-800 mb-1">Redmine API Key</label>
+          <label htmlFor="redmine_api_key" className="block text-sm font-medium text-primary mb-1">Redmine API Key</label>
           <div className="flex gap-4">
             <input
               type="text"
@@ -134,10 +136,10 @@ export function SettingsForm({ user }) {
               id="redmine_api_key"
               value={redmineApiKey}
               onChange={(e) => setRedmineApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!redmineVisible}
             />
-            <button type="button" onClick={handleValidateRedmine} className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75" disabled={!redmineVisible}>
+            <button type="button" onClick={handleValidateRedmine} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!redmineVisible}>
               Validar
             </button>
           </div>
@@ -146,7 +148,7 @@ export function SettingsForm({ user }) {
 
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Gitlab</h2>
+          <h2 className="text-xl font-bold text-primary">Gitlab</h2>
           <div className="flex items-center">
             <label htmlFor="gitlab_enabled" className="mr-2">Enable</label>
             <input
@@ -159,20 +161,20 @@ export function SettingsForm({ user }) {
           </div>
         </div>
         <div className="mt-4">
-          <label htmlFor="gitlab_url" className="block text-sm font-medium text-gray-800 mb-1">GitLab URL</label>
+          <label htmlFor="gitlab_url" className="block text-sm font-medium text-primary mb-1">GitLab URL</label>
           <input
             type="text"
             name="gitlab_url"
             id="gitlab_url"
             value={gitlabUrl}
             onChange={(e) => setGitlabUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!gitlabVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="gitlab_api_key" className="block text-sm font-medium text-gray-800 mb-1">GitLab API Key</label>
+          <label htmlFor="gitlab_api_key" className="block text-sm font-medium text-primary mb-1">GitLab API Key</label>
           <div className="flex gap-4">
             <input
               type="text"
@@ -180,10 +182,10 @@ export function SettingsForm({ user }) {
               id="gitlab_api_key"
               value={gitlabApiKey}
               onChange={(e) => setGitlabApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!gitlabVisible}
             />
-            <button type="button" onClick={handleValidateGitlab} className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75" disabled={!gitlabVisible}>
+            <button type="button" onClick={handleValidateGitlab} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!gitlabVisible}>
               Validar
             </button>
           </div>
@@ -192,7 +194,7 @@ export function SettingsForm({ user }) {
 
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Telegram</h2>
+          <h2 className="text-xl font-bold text-primary">Telegram</h2>
           <div className="flex items-center">
             <label htmlFor="telegram_enabled" className="mr-2">Enable</label>
             <input
@@ -205,7 +207,7 @@ export function SettingsForm({ user }) {
           </div>
         </div>
         <div className="mt-4">
-          <label htmlFor="telegram_bot_token" className="block text-sm font-medium text-gray-800 mb-1">Telegram Bot Token</label>
+          <label htmlFor="telegram_bot_token" className="block text-sm font-medium text-primary mb-1">Telegram Bot Token</label>
           <div className="flex gap-4">
             <input
               type="text"
@@ -213,17 +215,17 @@ export function SettingsForm({ user }) {
               id="telegram_bot_token"
               value={telegramBotToken}
               onChange={(e) => setTelegramBotToken(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!telegramVisible}
             />
-            <button type="button" onClick={handleValidateTelegram} className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75" disabled={!telegramVisible}>
+            <button type="button" onClick={handleValidateTelegram} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!telegramVisible}>
               Validar
             </button>
           </div>
         </div>
 
         <div className="mt-4">
-          <label htmlFor="telegram_chat_id" className="block text-sm font-medium text-gray-800 mb-1">Telegram Chat ID</label>
+          <label htmlFor="telegram_chat_id" className="block text-sm font-medium text-primary mb-1">Telegram Chat ID</label>
           <div className="flex gap-4">
             <input
               type="text"
@@ -231,10 +233,10 @@ export function SettingsForm({ user }) {
               id="telegram_chat_id"
               value={telegramChatId}
               onChange={(e) => setTelegramChatId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!telegramVisible}
             />
-            <button type="button" onClick={handleSendTestTelegramMessage} className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75" disabled={!telegramVisible}>
+            <button type="button" onClick={handleSendTestTelegramMessage} className="px-6 py-2 font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-75" disabled={!telegramVisible}>
               Enviar Mensaje de Prueba
             </button>
           </div>
@@ -243,7 +245,7 @@ export function SettingsForm({ user }) {
 
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">GLPI</h2>
+          <h2 className="text-xl font-bold text-primary">GLPI</h2>
           <div className="flex items-center">
             <label htmlFor="glpi_enabled" className="mr-2">Enable</label>
             <input
@@ -256,20 +258,20 @@ export function SettingsForm({ user }) {
           </div>
         </div>
         <div className="mt-4">
-          <label htmlFor="glpi_url" className="block text-sm font-medium text-gray-800 mb-1">GLPI URL</label>
+          <label htmlFor="glpi_url" className="block text-sm font-medium text-primary mb-1">GLPI URL</label>
           <input
             type="text"
             name="glpi_url"
             id="glpi_url"
             value={glpiUrl}
             onChange={(e) => setGlpiUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!glpiVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="glpi_api_key" className="block text-sm font-medium text-gray-800 mb-1">GLPI API Key</label>
+          <label htmlFor="glpi_api_key" className="block text-sm font-medium text-primary mb-1">GLPI API Key</label>
           <div className="flex gap-4">
             <input
               type="text"
@@ -277,10 +279,10 @@ export function SettingsForm({ user }) {
               id="glpi_api_key"
               value={glpiApiKey}
               onChange={(e) => setGlpiApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!glpiVisible}
             />
-            <button type="button" onClick={handleValidateGlpi} className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75" disabled={!glpiVisible}>
+            <button type="button" onClick={handleValidateGlpi} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!glpiVisible}>
               Validar
             </button>
           </div>
@@ -289,7 +291,7 @@ export function SettingsForm({ user }) {
 
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">CalDAV</h2>
+          <h2 className="text-xl font-bold text-primary">CalDAV</h2>
           <div className="flex items-center">
             <label htmlFor="caldav_enabled" className="mr-2">Enable</label>
             <input
@@ -302,33 +304,33 @@ export function SettingsForm({ user }) {
           </div>
         </div>
         <div className="mt-4">
-          <label htmlFor="caldav_url" className="block text-sm font-medium text-gray-800 mb-1">CalDAV URL</label>
+          <label htmlFor="caldav_url" className="block text-sm font-medium text-primary mb-1">CalDAV URL</label>
           <input
             type="text"
             name="caldav_url"
             id="caldav_url"
             value={caldavUrl}
             onChange={(e) => setCaldavUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!caldavVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="caldav_username" className="block text-sm font-medium text-gray-800 mb-1">CalDAV Username</label>
+          <label htmlFor="caldav_username" className="block text-sm font-medium text-primary mb-1">CalDAV Username</label>
           <input
             type="text"
             name="caldav_username"
             id="caldav_username"
             value={caldavUsername}
             onChange={(e) => setCaldavUsername(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!caldavVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="caldav_password" className="block text-sm font-medium text-gray-800 mb-1">CalDAV Password</label>
+          <label htmlFor="caldav_password" className="block text-sm font-medium text-primary mb-1">CalDAV Password</label>
           <div className="flex gap-4">
             <input
               type="password"
@@ -336,10 +338,10 @@ export function SettingsForm({ user }) {
               id="caldav_password"
               value={caldavPassword}
               onChange={(e) => setCaldavPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!caldavVisible}
             />
-            <button type="button" onClick={handleValidateCaldav} className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75" disabled={!caldavVisible}>
+            <button type="button" onClick={handleValidateCaldav} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!caldavVisible}>
               Validar
             </button>
           </div>
@@ -348,7 +350,7 @@ export function SettingsForm({ user }) {
 
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Zimbra / IMAP</h2>
+          <h2 className="text-xl font-bold text-primary">Zimbra / IMAP</h2>
           <div className="flex items-center">
             <label htmlFor="imap_enabled" className="mr-2">Enable</label>
             <input
@@ -361,73 +363,73 @@ export function SettingsForm({ user }) {
           </div>
         </div>
         <div className="mt-4">
-          <label htmlFor="imap_host" className="block text-sm font-medium text-gray-800 mb-1">IMAP Host</label>
+          <label htmlFor="imap_host" className="block text-sm font-medium text-primary mb-1">IMAP Host</label>
           <input
             type="text"
             name="imap_host"
             id="imap_host"
             value={imapHost}
             onChange={(e) => setImapHost(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="imap_port" className="block text-sm font-medium text-gray-800 mb-1">IMAP Port</label>
+          <label htmlFor="imap_port" className="block text-sm font-medium text-primary mb-1">IMAP Port</label>
           <input
             type="number"
             name="imap_port"
             id="imap_port"
             value={imapPort}
             onChange={(e) => setImapPort(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="imap_ssl" className="block text-sm font-medium text-gray-800 mb-1">IMAP SSL</label>
+          <label htmlFor="imap_ssl" className="block text-sm font-medium text-primary mb-1">IMAP SSL</label>
           <input
             type="checkbox"
             name="imap_ssl"
             id="imap_ssl"
             checked={imapSsl}
             onChange={(e) => setImapSsl(e.target.checked)}
-            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
             disabled={!imapVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="zimbra_username" className="block text-sm font-medium text-gray-800 mb-1">Zimbra Username</label>
+          <label htmlFor="zimbra_username" className="block text-sm font-medium text-primary mb-1">Zimbra Username</label>
           <input
             type="text"
             name="zimbra_username"
             id="zimbra_username"
             value={zimbraUsername}
             onChange={(e) => setZimbraUsername(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
 
         <div className="mt-4">
-          <label htmlFor="zimbra_password" className="block text-sm font-medium text-gray-800 mb-1">Zimbra Password</label>
+          <label htmlFor="zimbra_password" className="block text-sm font-medium text-primary mb-1">Zimbra Password</label>
           <input
             type="password"
             name="zimbra_password"
             id="zimbra_password"
             value={zimbraPassword}
             onChange={(e) => setZimbraPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
       </div>
 
       <div className="flex justify-end gap-4">
-        <button type="submit" className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+        <button type="submit" className="px-6 py-2 font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-75">
           Guardar
         </button>
       </div>

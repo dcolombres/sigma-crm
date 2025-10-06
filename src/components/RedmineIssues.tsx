@@ -53,7 +53,7 @@ export function RedmineIssues({ refreshing }) {
 
   return (
     <ul>
-      {issues.map((issue: any) => (
+      {issues.map((issue: { id: number; subject: string }) => (
         <li key={issue.id} className="mb-2">
           <a href={`https://redmine.produccion.gob.ar/issues/${issue.id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
             #{issue.id}: {issue.subject}

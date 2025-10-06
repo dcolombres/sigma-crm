@@ -145,8 +145,8 @@ model Proyecto {
   id_dependencia_actual Int?
   id_categoria          Int?
   id_subcategoria       Int?
-  url_captura           String?
-  url_caratula          String?
+  captura_data          Bytes?
+  captura_type          String?
   url_ticketera_interna String?
   url_ticketera_externa String?
   tier                  Int?

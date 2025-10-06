@@ -53,7 +53,7 @@ export function ZimbraEmails({ refreshing }) {
 
   return (
     <ul>
-      {emails.map((email: any, index: number) => (
+      {emails.map((email: { from: string; date: string; subject: string }, index: number) => (
         <li key={index} className="mb-4 border-b pb-2">
           <div className="flex justify-between items-center mb-1">
             <p className="font-bold text-sm">{email.from}</p>

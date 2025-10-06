@@ -1,10 +1,19 @@
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { authOptions } from "@/lib/auth";
+import { updateProfile } from '@/lib/actions';
+import ProfileForm from '@/components/ProfileForm';
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
-  const user = await prisma.staff.findUnique({ where: { email: session.user.email } });
+  if (!session?.user?.email) {
+    return <div>User not found</div>;
+  }
+
+  const user = await prisma.user.findUnique({ 
+    where: { email: session.user.email },
+    include: { staff: true },
+  });
 
   if (!user) {
     return <div>User not found</div>;
@@ -12,21 +21,8 @@ export default async function ProfilePage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-text-primary mb-8">Profile</h1>
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Full Name</label>
-          <p className="mt-1 text-lg text-gray-900">{user.nombre_completo}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Email</label>
-          <p className="mt-1 text-lg text-gray-900">{user.email}</p>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Role</label>
-          <p className="mt-1 text-lg text-gray-900">{user.rol}</p>
-        </div>
-      </div>
+      <h1 className="text-3xl font-bold text-primary mb-8 font-poppins">Profile</h1>
+      <ProfileForm user={user} updateProfile={updateProfile} />
     </div>
   );
 }

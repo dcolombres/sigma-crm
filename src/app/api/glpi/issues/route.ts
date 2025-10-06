@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -10,18 +10,19 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const user = await prisma.staff.findUnique({ where: { email: session.user.email } });
+  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
 
   if (!user || !user.glpi_url || !user.glpi_api_key) {
     return NextResponse.json({ error: 'GLPI URL or API key not configured.' }, { status: 401 });
   }
 
-  const { glpi_url, glpi_api_key, glpi_app_token } = user;
+  const { glpi_url, glpi_api_key } = user;
+  const glpi_app_token = (user as Record<string, unknown>).glpi_app_token as string | undefined; // Field doesn't exist in schema yet
   const baseUrl = glpi_url.endsWith('/') ? glpi_url.slice(0, -1) : glpi_url;
   const apiUrl = `${baseUrl}/apirest.php`;
 
   try {
-    const headers: any = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Authorization': `user_token ${glpi_api_key}`,
     };
@@ -44,7 +45,7 @@ export async function GET() {
     const sessionData = await sessionResponse.json();
     const session_token = sessionData.session_token;
 
-    const sessionHeaders = {
+    const sessionHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
         'Session-Token': session_token,
     };

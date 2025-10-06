@@ -27,34 +27,34 @@ const UserMenu = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2"
       >
-        <UserIcon className="w-8 h-8 rounded-full bg-gray-200 p-1" />
-        <span className="text-sm font-medium">{user.name}</span>
+        <UserIcon className="w-8 h-8 rounded-full bg-background p-1" />
+        <span className="text-sm font-medium font-poppins">{user.name}</span>
       </button>
       {isOpen && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-          <div className="px-4 py-2 text-sm text-gray-700">
-            <p className="font-medium">{user.name}</p>
-            <p className="text-xs text-gray-500">{user.email}</p>
+          <div className="px-4 py-2 text-sm text-secondary">
+            <p className="font-medium text-primary">{user.name}</p>
+            <p className="text-xs text-secondary">{user.email}</p>
           </div>
-          <div className="border-t border-gray-100"></div>
+          <div className="border-t border-background"></div>
           <Link
             href="/profile"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            className="block px-4 py-2 text-sm text-secondary hover:bg-background"
           >
             <UserIcon className="w-5 h-5 mr-2 inline-block" />
             Profile
           </Link>
           <Link
             href="/settings"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            className="block px-4 py-2 text-sm text-secondary hover:bg-background"
           >
             <Cog8ToothIcon className="w-5 h-5 mr-2 inline-block" />
             Settings
           </Link>
-          <div className="border-t border-gray-100"></div>
+          <div className="border-t border-background"></div>
           <button
             onClick={handleLogout}
-            className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            className="w-full text-left block px-4 py-2 text-sm text-secondary hover:bg-background"
           >
             <ArrowLeftStartOnRectangleIcon className="w-5 h-5 mr-2 inline-block" />
             Logout

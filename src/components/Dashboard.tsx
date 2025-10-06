@@ -5,15 +5,33 @@ import { GitlabActivity } from './GitlabActivity';
 import { TelegramMessages } from './TelegramMessages';
 import { CalendarEvents } from './CalendarEvents';
 import { ZimbraEmails } from './ZimbraEmails';
-import { useState } from 'react';
+import { useState, ReactNode } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { PieChart, BarChart } from '@mui/x-charts';
+import { User, Staff } from '@prisma/client';
 
-const Card = ({ title, children, onRefresh }) => {
+interface ChartData {
+  id: string | number;
+  value: number;
+  label: string;
+  [key: string]: string | number | Date | null | undefined;
+}
+
+interface DashboardVisibility {
+  redmine?: boolean;
+  gitlab?: boolean;
+  telegram?: boolean;
+  glpi?: boolean;
+  caldav?: boolean;
+  imap?: boolean;
+}
+
+const Card = ({ title, children, onRefresh }: { title: string, children: ReactNode, onRefresh?: () => void }) => {
   const [isOpen, setIsOpen] = useState(true);
 
-  const handleRefresh = (e) => {
+  // FIX: Added type React.MouseEvent to the event parameter
+  const handleRefresh = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (onRefresh) {
       onRefresh();
@@ -21,22 +39,22 @@ const Card = ({ title, children, onRefresh }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+    <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200">
       <div className="p-4 flex justify-between items-center cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-        <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+        <h3 className="text-lg font-bold text-primary font-poppins">{title}</h3>
         <div className="flex items-center gap-2">
           {onRefresh && (
-            <button onClick={handleRefresh} className="p-1 rounded-full hover:bg-slate-100">
-              <ArrowPathIcon className="h-5 w-5 text-slate-500" />
+            <button onClick={handleRefresh} className="p-1 rounded-full hover:bg-background">
+              <ArrowPathIcon className="h-5 w-5 text-secondary" />
             </button>
           )}
-          <button className="p-1 rounded-full hover:bg-slate-100">
-            {isOpen ? <ChevronUpIcon className="h-5 w-5 text-slate-500" /> : <ChevronDownIcon className="h-5 w-5 text-slate-500" />}
+          <button className="p-1 rounded-full hover:bg-background">
+            {isOpen ? <ChevronUpIcon className="h-5 w-5 text-secondary" /> : <ChevronDownIcon className="h-5 w-5 text-secondary" />}
           </button>
         </div>
       </div>
       {isOpen && (
-        <div className="p-4 border-t border-slate-100">
+        <div className="p-4 border-t border-gray-200">
           {children}
         </div>
       )}
@@ -44,21 +62,21 @@ const Card = ({ title, children, onRefresh }) => {
   );
 };
 
-const PieChartCard = ({ title, data }) => {
+const PieChartCard = ({ title, data }: { title: string, data: ChartData[] }) => {
   if (!data || data.length === 0) {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-            <h3 className="text-lg font-bold text-slate-800 mb-4">{title}</h3>
+        <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
+            <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
             <div className="flex items-center justify-center h-[250px]">
-                <p className="text-slate-500">No hay datos para mostrar.</p>
+                <p className="text-secondary">No hay datos para mostrar.</p>
             </div>
         </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-        <h3 className="text-lg font-bold text-slate-800 mb-4">{title}</h3>
+    <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
+        <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
         <div style={{ width: '100%', height: 250 }}>
             <PieChart
                 series={[
@@ -68,8 +86,7 @@ const PieChartCard = ({ title, data }) => {
                         outerRadius: 80,
                         paddingAngle: 2,
                         cornerRadius: 5,
-                        highlightScope: { faded: 'global', highlighted: 'item' },
-                        faded: { innerRadius: 50, additionalRadius: -10, color: 'gray' },
+                        highlightScope: { fade: 'global', highlight: 'item' },
                     },
                 ]}
             />
@@ -78,21 +95,21 @@ const PieChartCard = ({ title, data }) => {
   );
 };
 
-const BarChartCard = ({ title, data }) => {
+const BarChartCard = ({ title, data }: { title: string, data: ChartData[] }) => {
     if (!data || data.length === 0) {
         return (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">{title}</h3>
+            <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
+                <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
                 <div className="flex items-center justify-center h-[250px]">
-                    <p className="text-slate-500">No hay datos para mostrar.</p>
+                    <p className="text-secondary">No hay datos para mostrar.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-            <h3 className="text-lg font-bold text-slate-800 mb-4">{title}</h3>
+        <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
+            <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
             <div style={{ width: '100%', height: 250 }}>
                 <BarChart
                     dataset={data}
@@ -105,25 +122,32 @@ const BarChartCard = ({ title, data }) => {
     );
 };
 
+interface DashboardProps {
+  user: User & { staff: Staff | null };
+  roleChartData: ChartData[];
+  infraChartData: ChartData[];
+  dbChartData: ChartData[];
+  tierChartData: ChartData[];
+}
 
-const Dashboard = ({ user, roleChartData, infraChartData, dbChartData, tierChartData }) => {
+const Dashboard = ({ user, roleChartData, infraChartData, dbChartData, tierChartData }: DashboardProps) => {
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = (setter) => {
+  const handleRefresh = (setter: (value: boolean) => void) => {
     setter(true);
-    setTimeout(() => setter(false), 1000); // Simulate a refresh
+    setTimeout(() => setter(false), 1000);
   };
 
-  const visibility = user?.dashboard_card_visibility || {};
+  const visibility = (user?.dashboard_card_visibility || {}) as DashboardVisibility;
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-background min-h-screen">
       <div className="p-8">
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-8">Dashboard</h2>
+        <h2 className="text-3xl font-extrabold text-primary mb-8 font-poppins">Dashboard</h2>
 
         {/* Global Charts Section */}
         <div className="mb-8">
-            <h3 className="text-2xl font-bold text-slate-800 mb-4">Estadísticas Globales</h3>
+            <h3 className="text-2xl font-bold text-primary mb-4 font-poppins">Estadísticas Globales</h3>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <BarChartCard title="Roles de Staff" data={roleChartData} />
                 <PieChartCard title="Distribución por Tier" data={tierChartData} />

@@ -5,9 +5,7 @@ import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import UserMenu from './UserMenu';
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { searchProjects } from '@/lib/actions';
-
+import { useState, useEffect, useRef } from 'react';
 
 const NavLink = ({ href, children }) => {
     const pathname = usePathname();
@@ -16,10 +14,10 @@ const NavLink = ({ href, children }) => {
     return (
         <Link
             href={href}
-            className={`px-3 py-2 rounded-md text-sm font-medium ${
+            className={`px-3 py-2 rounded-md text-sm font-poppins font-medium ${
                 isActive
                     ? 'text-white bg-primary'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    : 'text-text-primary hover:text-primary'
             }`}
         >
             {children}
@@ -29,7 +27,7 @@ const NavLink = ({ href, children }) => {
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState([]);
+    const [results, setResults] = useState({ proyectos: [], staff: [], clientes: [], integraciones: [] });
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const searchRef = useRef(null);
@@ -37,11 +35,12 @@ const SearchBar = () => {
     useEffect(() => {
         const timer = setTimeout(async () => {
             if (query) {
-                const projects = await searchProjects(query);
-                setResults(projects);
+                const response = await fetch(`/api/search?q=${query}`);
+                const data = await response.json();
+                setResults(data);
                 setIsOpen(true);
             } else {
-                setResults([]);
+                setResults({ proyectos: [], staff: [], clientes: [], integraciones: [] });
                 setIsOpen(false);
             }
         }, 300); // 300ms delay
@@ -64,35 +63,84 @@ const SearchBar = () => {
         };
     }, [searchRef]);
 
-    const handleResultClick = (id) => {
+    const handleResultClick = (type, id) => {
         setIsOpen(false);
         setQuery('');
-        router.push(`/proyectos/${id}`);
+        router.push(`/${type}/${id}`);
     };
+
+    const hasResults = results.proyectos.length > 0 || results.staff.length > 0 || results.clientes.length > 0 || results.integraciones.length > 0;
 
     return (
         <div className="relative hidden sm:block" ref={searchRef}>
-            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400 absolute top-1/2 left-3 -translate-y-1/2" />
+            <MagnifyingGlassIcon className="w-5 h-5 text-text-secondary absolute top-1/2 left-3 -translate-y-1/2" />
             <input 
                 type="text" 
-                placeholder="Buscar proyectos..." 
-                className="bg-gray-100 border border-gray-200 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-64"
+                placeholder="Búsqueda global..." 
+                className="bg-white border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-64"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setIsOpen(true)}
             />
-            {isOpen && results.length > 0 && (
+            {isOpen && hasResults && (
                 <div className="absolute z-10 top-full mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg">
                     <ul className="py-1">
-                        {results.map((project) => (
-                            <li 
-                                key={project.id}
-                                onClick={() => handleResultClick(project.id)}
-                                className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                            >
-                                {project.titulo}
-                            </li>
-                        ))}
+                        {results.proyectos.length > 0 && (
+                            <>
+                                <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Proyectos</li>
+                                {results.proyectos.map((project) => (
+                                    <li 
+                                        key={`proj-${project.id}`}
+                                        onClick={() => handleResultClick('proyectos', project.id)}
+                                        className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
+                                    >
+                                        {project.titulo}
+                                    </li>
+                                ))}
+                            </>
+                        )}
+                        {results.staff.length > 0 && (
+                            <>
+                                <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Staff</li>
+                                {results.staff.map((person) => (
+                                    <li 
+                                        key={`staff-${person.id}`}
+                                        onClick={() => handleResultClick('staff', person.id)}
+                                        className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
+                                    >
+                                        {person.nombre_completo}
+                                    </li>
+                                ))}
+                            </> 
+                        )}
+                        {results.clientes.length > 0 && (
+                            <>
+                                <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Clientes</li>
+                                {results.clientes.map((client) => (
+                                    <li 
+                                        key={`client-${client.id}`}
+                                        onClick={() => handleResultClick('clientes', client.id)}
+                                        className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
+                                    >
+                                        {client.nombre}
+                                    </li>
+                                ))}
+                            </>
+                        )}
+                        {results.integraciones.length > 0 && (
+                            <>
+                                <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Integraciones</li>
+                                {results.integraciones.map((integration) => (
+                                    <li 
+                                        key={`int-${integration.id}`}
+                                        onClick={() => handleResultClick('integraciones', integration.id)}
+                                        className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
+                                    >
+                                        {integration.nombre}
+                                    </li>
+                                ))}
+                            </>
+                        )}
                     </ul>
                 </div>
             )}
@@ -107,30 +155,15 @@ const Topbar = () => {
             <div className="h-16 flex items-center justify-between">
                 {/* Left side: Logo and Main Navigation */}
                 <div className="flex items-center gap-8">
-                    {/* Logo */}
                     
-                    <Link href="/" className="flex items-center gap-2">
-                        <Image src="/logosigma.svg" alt="SIGMA CRM Logo" width={50} height={50} priority />
-                        <span className="font-bold text-lg text-text-primary"></span>
-                    </Link>
 
-                    {/* Navigation Links */}
-                    <nav className="hidden md:flex items-center gap-4">
-                        <NavLink href="/">Dashboard</NavLink>
-                        <NavLink href="/proyectos">Proyectos</NavLink>
-                        <NavLink href="/staff">Staff</NavLink>
-                        <NavLink href="/clientes">Clientes</NavLink>
-                        <NavLink href="/integraciones">Integraciones</NavLink>
-                        <NavLink href="/settings">Settings</NavLink>
-                    </nav>
+
                 </div>
 
                 {/* Right side: Search, Icons, and User Menu */}
                 <div className="flex items-center gap-4">
                     <SearchBar />
-                    <button className="text-gray-500 hover:text-gray-700">
-                        <BellIcon className="w-6 h-6" />
-                    </button>
+
                     <UserMenu />
                 </div>
             </div>

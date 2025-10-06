@@ -1,12 +1,13 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { useFormState } from 'react-dom';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { createOrUpdateTecnologia } from '@/lib/actions';
 
 export function TecnologiaForm({ id_proyecto, tecnologia, controlVersiones, statusPmo, statusSalud, alojamientoInfra, alojamientoInfraDB }) {
-  const [state, formAction] = useActionState(createOrUpdateTecnologia, null);
+  const [state, formAction] = useFormState(createOrUpdateTecnologia, null);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {

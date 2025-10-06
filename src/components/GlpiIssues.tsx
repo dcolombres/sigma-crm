@@ -3,7 +3,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 
-export function GlpiIssues({ refreshing }) {
+interface GlpiIssuesProps {
+  refreshing: boolean;
+}
+
+export function GlpiIssues({ refreshing }: GlpiIssuesProps) {
   const [issues, setIssues] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +24,11 @@ export function GlpiIssues({ refreshing }) {
       const data = await response.json();
       setIssues(data.data);
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +61,7 @@ export function GlpiIssues({ refreshing }) {
 
   return (
     <ul>
-      {issues.map((issue: any) => (
+      {issues.map((issue: { id: number; name: string }) => (
         <li key={issue.id} className="mb-2">
           <a href={`https://glpi.produccion.gob.ar/front/ticket.form.php?id=${issue.id}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
             #{issue.id}: {issue.name}

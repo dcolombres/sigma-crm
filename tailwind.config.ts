@@ -9,19 +9,35 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#556ee6',
-        secondary: '#34c38f',
-        background: '#f8f8fb',
-        'sidebar-bg': '#ffffff',
-        'sidebar-text': '#495057',
-        'sidebar-hover': '#f0f0f0',
-        'topbar-bg': '#ffffff',
-        'card-bg': '#ffffff',
-        'text-primary': '#495057',
-        'text-secondary': '#7a7f9a',
+        white: 'var(--color-white)',
+        black: 'var(--color-black)',
+        primary: 'var(--color-primary)',
+        'primary-dark': 'var(--color-primary-dark)',
+        secondary: 'var(--color-secondary)',
+        'secondary-dark': 'var(--color-secondary-dark)',
+        accent: 'var(--color-accent)',
+        background: 'var(--color-background)',
+        'sidebar-bg': 'var(--color-sidebar-bg)',
+        'sidebar-text': 'var(--color-sidebar-text)',
+        'sidebar-hover': 'var(--color-sidebar-hover)',
+        'topbar-bg': 'var(--color-topbar-bg)',
+        'card-bg': 'var(--color-card-bg)',
+        'text-primary': 'var(--color-text-primary)',
+        'text-secondary': 'var(--color-text-secondary)',
+        'tag-green': 'var(--color-tag-green)',
+        'tag-red': 'var(--color-tag-red)',
+        'tag-yellow': 'var(--color-tag-yellow)',
+        gray: {
+          200: 'var(--color-gray-200)',
+          300: 'var(--color-gray-300)',
+        }
+      },
+      fontFamily: {
+        sans: ['var(--font-poppins)', 'sans-serif'],
+        poppins: ['var(--font-poppins)', 'sans-serif'],
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 }
 export default config

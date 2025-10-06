@@ -3,7 +3,7 @@ import prisma from '@/lib/prisma';
 import Imap from 'imap';
 import { simpleParser } from 'mailparser';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -25,19 +25,19 @@ export async function GET() {
     password: zimbra_password,
     host: imap_host,
     port: imap_port,
-    tls: imap_ssl,
+    tls: imap_ssl || false,
     tlsOptions: {
       rejectUnauthorized: false
     }
   };
 
-  const fetchEmails = (): Promise<any[]> => {
+  const fetchEmails = (): Promise<Array<Record<string, unknown>>> => {
     return new Promise((resolve, reject) => {
       const imap = new Imap(imapConfig);
-      const emails = [];
+      const emails: Array<Record<string, unknown>> = [];
 
       imap.once('ready', () => {
-        imap.openBox('INBOX', true, (err, box) => {
+        imap.openBox('INBOX', true, (err) => {
           if (err) {
             imap.end();
             return reject(err);
@@ -58,11 +58,10 @@ export async function GET() {
 
             const f = imap.fetch(last10Uids, {
               bodies: ['HEADER.FIELDS (FROM SUBJECT DATE)'],
-              byUid: true
             });
 
-            f.on('message', (msg, seqno) => {
-              msg.on('body', (stream, info) => {
+            f.on('message', (msg) => {
+              msg.on('body', (stream) => {
                 let buffer = '';
                 stream.on('data', (chunk) => {
                   buffer += chunk.toString('utf8');
@@ -91,14 +90,14 @@ export async function GET() {
             f.once('end', () => {
               imap.end();
               // Ordenar por fecha descendente para estar seguros
-              emails.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+              emails.sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime());
               resolve(emails);
             });
           });
         });
       });
 
-      imap.once('error', (err) => {
+      imap.once('error', (err: Error) => {
         reject(err);
       });
 

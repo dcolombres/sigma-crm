@@ -1,9 +1,325 @@
 'use server';
 
 import prisma from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { getNumberOrNull } from '@/lib/utils';
+import { getNumberOrNull, toDateOrNull, calculateAge, toBoolean } from '@/lib/utils';
+import { getServerSession } from 'next-auth';
+import { authOptions } from "@/lib/auth";
+
+export async function updateProfile(prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return { message: 'No autorizado.', error: true };
+  }
+
+  const currentPassword = formData.get('current_password') as string;
+  const newPassword = formData.get('new_password') as string;
+  const confirmPassword = formData.get('confirm_password') as string;
+
+  if (newPassword && newPassword !== confirmPassword) {
+    return { message: 'Las contraseñas no coinciden.', error: true };
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user || !user.password) {
+      return { message: 'Usuario no encontrado.', error: true };
+    }
+
+    if (currentPassword) {
+        const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+        if (!isPasswordCorrect) {
+            return { message: 'La contraseña actual es incorrecta.', error: true };
+        }
+
+        if (newPassword) {
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { password: hashedPassword },
+            });
+            return { message: 'Contraseña actualizada correctamente.', error: false };
+        }
+    } else if (newPassword) {
+        return { message: 'Debe proporcionar la contraseña actual para cambiarla.', error: true };
+    }
+
+    return { message: 'No se realizaron cambios.', error: false };
+
+  } catch (error) {
+    console.error(error);
+    return { message: 'Error al actualizar el perfil.', error: true };
+  }
+}
+
+export async function updateClient(id_cliente: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const nombre = formData.get('nombre') as string;
+  const id_proyecto = getNumberOrNull(formData.get('id_proyecto'));
+
+  if (!nombre || nombre.trim() === '' || !id_proyecto) {
+    return { message: 'Nombre y Proyecto son requeridos.', error: true };
+  }
+
+  try {
+    await prisma.cliente.update({
+      where: { id: id_cliente },
+      data: {
+        nombre: nombre,
+        id_proyecto: id_proyecto,
+        email: formData.get('email') as string,
+        celular: formData.get('celular') as string,
+        observacion: formData.get('observacion') as string,
+        activo: toBoolean(formData.get('activo')),
+        fecha_inicio_desarrollo: toDateOrNull(formData.get('fecha_inicio_desarrollo')),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { message: 'Ya existe un cliente con este nombre para este proyecto.', error: true };
+    }
+    return { message: 'Error al actualizar el cliente.', error: true };
+  }
+
+  revalidatePath('/clientes');
+  revalidatePath(`/proyectos/${id_proyecto}`);
+  revalidatePath(`/clientes/${id_cliente}/editar`);
+  redirect('/clientes');
+}
+
+export async function createClient(prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const nombre = formData.get('nombre') as string;
+  const id_proyecto = getNumberOrNull(formData.get('id_proyecto'));
+
+  if (!nombre || nombre.trim() === '' || !id_proyecto) {
+    return { message: 'Nombre y Proyecto son requeridos.', error: true };
+  }
+
+  try {
+    await prisma.cliente.create({
+      data: {
+        nombre: nombre,
+        id_proyecto: id_proyecto,
+        email: formData.get('email') as string,
+        celular: formData.get('celular') as string,
+        observacion: formData.get('observacion') as string,
+        activo: toBoolean(formData.get('activo')),
+        fecha_inicio_desarrollo: toDateOrNull(formData.get('fecha_inicio_desarrollo')),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { message: 'Ya existe un cliente con este nombre para este proyecto.', error: true };
+    }
+    return { message: 'Error al crear el cliente.', error: true };
+  }
+
+  revalidatePath('/clientes');
+  revalidatePath(`/proyectos/${id_proyecto}`);
+  redirect('/clientes');
+}
+
+export async function deleteClient(id_cliente: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  try {
+    await prisma.cliente.delete({ where: { id: id_cliente } });
+    revalidatePath('/clientes');
+    return { message: 'Cliente eliminado correctamente.', error: false };
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        return { message: `No se puede eliminar el cliente porque tiene registros relacionados.`, error: true };
+    }
+    return { message: 'Error al eliminar el cliente.', error: true };
+  }
+}
+
+export async function updateIntegration(id_integracion: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const nombre = formData.get('nombre') as string;
+  if (!nombre || nombre.trim() === '') {
+    return { message: 'El nombre de la integración es requerido.', error: true };
+  }
+
+  try {
+    await prisma.integracion.update({
+      where: { id: id_integracion },
+      data: {
+        nombre: nombre,
+        funcion_principal: formData.get('funcion_principal') as string,
+        documentacion: formData.get('documentacion') as string,
+        id_responsable: getNumberOrNull(formData.get('id_responsable')),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { message: 'Ya existe una integración con este nombre.', error: true };
+    }
+    return { message: 'Error al actualizar la integración.', error: true };
+  }
+
+  revalidatePath('/integraciones');
+  revalidatePath(`/integraciones/${id_integracion}/editar`);
+  redirect('/integraciones');
+}
+
+export async function createIntegration(prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const nombre = formData.get('nombre') as string;
+  if (!nombre || nombre.trim() === '') {
+    return { message: 'El nombre de la integración es requerido.', error: true };
+  }
+
+  try {
+    await prisma.integracion.create({
+      data: {
+        nombre: nombre,
+        funcion_principal: formData.get('funcion_principal') as string,
+        documentacion: formData.get('documentacion') as string,
+        id_responsable: getNumberOrNull(formData.get('id_responsable')),
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { message: 'Ya existe una integración con este nombre.', error: true };
+    }
+    return { message: 'Error al crear la integración.', error: true };
+  }
+
+  revalidatePath('/integraciones');
+  redirect('/integraciones');
+}
+
+export async function deleteIntegration(id_integracion: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  try {
+    await prisma.integracion.delete({ where: { id: id_integracion } });
+    revalidatePath('/integraciones');
+    return { message: 'Integración eliminada correctamente.', error: false };
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        return { message: `No se puede eliminar la integración porque tiene registros relacionados.`, error: true };
+    }
+    return { message: 'Error al eliminar la integración.', error: true };
+  }
+}
+
+export async function updateStaff(id_staff: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const nombres = formData.get('nombres') as string;
+  const apellidos = formData.get('apellidos') as string;
+  const email = formData.get('email') as string;
+
+  if (!nombres || !apellidos || !email) {
+    return { message: 'Nombres, Apellidos y Email son requeridos.', error: true };
+  }
+
+  try {
+    const nombre_completo = `${nombres} ${apellidos}`;
+    const cumpleanos = toDateOrNull(formData.get('cumpleanos'));
+    const edad = cumpleanos ? calculateAge(cumpleanos) : null;
+    const proyectoIds = formData.getAll('proyectos').map(id => Number(id as string));
+
+    await prisma.staff.update({
+      where: { id: id_staff },
+      data: {
+        nombre_completo,
+        email,
+        nombres,
+        apellidos,
+        edad,
+        cumpleanos,
+        rol_staff: formData.get('rol_staff') as string,
+        contrato: formData.get('contrato') as string,
+        activo: toBoolean(formData.get('activo')),
+        comentario: formData.get('comentario') as string,
+        modalidad: formData.get('modalidad') as string,
+        experiencia: formData.get('experiencia') as string,
+        origen: formData.get('origen') as string,
+        skills: formData.get('skills') as string,
+        desempeno_ley_dto: formData.get('desempeno_ley_dto') as string,
+        hhee: toBoolean(formData.get('hhee')),
+        ur: toBoolean(formData.get('ur')),
+        coordinacion: formData.get('coordinacion') as string,
+        presencialidad: formData.get('presencialidad') as string,
+        proyectos: {
+          deleteMany: {},
+          create: proyectoIds.map(id => ({ proyecto: { connect: { id } }})),
+        },
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { message: 'El email ya existe.', error: true };
+    }
+    return { message: 'Error al actualizar la persona.', error: true };
+  }
+
+  revalidatePath('/staff');
+  revalidatePath(`/staff/${id_staff}/editar`);
+  redirect('/staff');
+}
+
+export async function createStaff(prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  'use server';
+
+  const nombre = formData.get('nombre_completo') as string;
+  const email = formData.get('email') as string;
+
+  if (!nombre || nombre.trim() === '' || !email || email.trim() === '') {
+    return { message: 'Nombre y Email son requeridos.', error: true };
+  }
+
+  try {
+    await prisma.staff.create({
+      data: {
+        nombre_completo: nombre,
+        email: email,
+        rol_staff: formData.get('rol') as string,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      return { message: 'El email ya existe.', error: true };
+    }
+    return { message: 'Error al crear la persona.', error: true };
+  }
+
+  revalidatePath('/staff');
+  redirect('/staff');
+}
+
+export async function deleteStaff(id_staff: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  try {
+    await prisma.staff.delete({ where: { id: id_staff } });
+    revalidatePath('/staff');
+    return { message: 'Persona eliminada correctamente.', error: false };
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        return { message: `No se puede eliminar la persona porque tiene registros relacionados (proyectos, etc.).`, error: true };
+    }
+    return { message: 'Error al eliminar la persona.', error: true };
+  }
+}
 
 export async function assignStaff(formData: FormData) {
   const id_proyecto = Number(formData.get('id_proyecto'));
@@ -35,13 +351,21 @@ export async function unassignStaff(formData: FormData) {
   revalidatePath(`/proyectos/${id_proyecto}`);
 }
 
-export async function deleteProject(id_proyecto: number) {
-  await prisma.proyecto.delete({ where: { id: id_proyecto } });
+export async function deleteProject(id_proyecto: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  try {
+    await prisma.proyecto.delete({ where: { id: id_proyecto } });
+  } catch (error) {
+    console.error(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2003') {
+        return { message: `No se puede eliminar el proyecto porque tiene registros relacionados (staff, clientes, etc.).`, error: true };
+    }
+    return { message: 'Error al eliminar el proyecto.', error: true };
+  }
   revalidatePath('/');
   redirect('/');
 }
 
-export async function createOrUpdateTecnologia(prevState: any, formData: FormData) {
+export async function createOrUpdateTecnologia(prevState: { status?: string; message?: string } | null, formData: FormData) {
   const id_proyecto = Number(formData.get('id_proyecto'));
 
   if (!id_proyecto) {
@@ -81,17 +405,23 @@ export async function createOrUpdateTecnologia(prevState: any, formData: FormDat
 
     revalidatePath(`/proyectos/${id_proyecto}`);
     return { status: 'success', message: 'Tecnología guardada correctamente.' };
-  } catch (error) {
+  } catch {
     return { status: 'error', message: 'Error al guardar la tecnología.' };
   }
 }
 
-export async function deleteTecnologia(id_proyecto: number) {
-  await prisma.tecnologia.delete({ where: { id_proyecto: id_proyecto } });
-  revalidatePath(`/proyectos/${id_proyecto}`);
+export async function deleteTecnologia(id_proyecto: number, prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
+  try {
+    await prisma.tecnologia.delete({ where: { id_proyecto: id_proyecto } });
+    revalidatePath(`/proyectos/${id_proyecto}`);
+    return { message: 'Tecnología eliminada correctamente.', error: false };
+  } catch (error) {
+    console.error(error);
+    return { message: 'Error al eliminar la tecnología.', error: true };
+  }
 }
 
-export async function updateApiKey(prevState: any, formData: FormData) {
+export async function updateApiKey(prevState: { status?: string; message?: string } | null, formData: FormData) {
   console.log('Form data:', Object.fromEntries(formData.entries()));
   const userId = Number(formData.get('userId'));
   const redmineApiKey = formData.get('redmine_api_key') as string;
@@ -123,9 +453,7 @@ export async function updateApiKey(prevState: any, formData: FormData) {
   }
 
   try {
-    await prisma.user.update({
-      where: { id: userId },
-      data: { 
+    const dataToUpdate: Prisma.UserUpdateInput = {
         redmine_api_key: redmineApiKey,
         redmine_url: redmineUrl,
         gitlab_api_key: gitlabApiKey,
@@ -136,12 +464,10 @@ export async function updateApiKey(prevState: any, formData: FormData) {
         glpi_api_key: glpiApiKey,
         caldav_url: caldavUrl,
         caldav_username: caldavUsername,
-        caldav_password: caldavPassword,
         imap_host: imapHost,
         imap_port: imapPort,
         imap_ssl: imapSsl,
         zimbra_username: zimbraUsername,
-        zimbra_password: zimbraPassword,
         dashboard_card_visibility: {
           redmine: redmineEnabled,
           gitlab: gitlabEnabled,
@@ -150,7 +476,21 @@ export async function updateApiKey(prevState: any, formData: FormData) {
           caldav: caldavEnabled,
           imap: imapEnabled,
         },
-      },
+    };
+
+    if (caldavPassword) {
+        const hashedCaldavPassword = await bcrypt.hash(caldavPassword, 10);
+        dataToUpdate.caldav_password = hashedCaldavPassword;
+    }
+
+    if (zimbraPassword) {
+        const hashedZimbraPassword = await bcrypt.hash(zimbraPassword, 10);
+        dataToUpdate.zimbra_password = hashedZimbraPassword;
+    }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: dataToUpdate,
     });
     revalidatePath('/integrations');
     return { status: 'success', message: 'API Key guardada correctamente.' };

@@ -1,69 +1,19 @@
-import prisma from '@/lib/prisma';
-import { redirect } from 'next/navigation';
-import { revalidatePath } from 'next/cache';
+import { createStaff } from '@/lib/actions';
+import StaffNewForm from '@/components/StaffNewForm';
 import Link from 'next/link';
 
-// Server Action to create a staff member
-async function createStaff(formData: FormData) {
-  'use server';
-
-  const nombre = formData.get('nombre_completo') as string;
-  const email = formData.get('email') as string;
-
-  if (!nombre || nombre.trim() === '' || !email || email.trim() === '') {
-    throw new Error('Nombre y Email son requeridos.');
-  }
-
-  await prisma.staff.create({
-    data: {
-      nombre_completo: nombre,
-      email: email,
-      rol: formData.get('rol') as string,
-    },
-  });
-
-  revalidatePath('/staff'); // Refresh the staff list page
-  redirect('/staff'); // Redirect after creation
-}
-
-// The page component
 export default function NuevoStaffPage() {
   return (
-    <main className="flex flex-col items-center min-h-screen p-8 bg-gray-100">
+    <main className="flex flex-col items-center min-h-screen p-8 bg-background">
       <div className="w-full max-w-2xl">
         <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Añadir Persona al Equipo</h1>
-            <Link href="/staff" className="text-sm font-medium text-blue-600 hover:underline">
+            <h1 className="text-3xl font-bold text-primary">Añadir Persona al Equipo</h1>
+            <Link href="/staff" className="text-sm font-medium text-primary hover:underline">
                 &larr; Volver a la lista
             </Link>
         </div>
         
-        <form action={createStaff} className="bg-white p-8 rounded-lg shadow-md flex flex-col gap-6">
-          
-          <div>
-            <label htmlFor="nombre_completo" className="block text-sm font-medium text-gray-800 mb-1">Nombre Completo <span className="text-red-500">*</span></label>
-            <input type="text" name="nombre_completo" id="nombre_completo" required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-1">Email <span className="text-red-500">*</span></label>
-            <input type="email" name="email" id="email" required className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-          </div>
-
-          <div>
-            <label htmlFor="rol" className="block text-sm font-medium text-gray-800 mb-1">Rol</label>
-            <input type="text" name="rol" id="rol" placeholder="Ej: Desarrollador, Project Manager" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" />
-          </div>
-
-          <div className="flex justify-end items-center gap-4 mt-4">
-            <Link href="/staff" className="text-gray-600 hover:underline text-sm">
-              Cancelar
-            </Link>
-            <button type="submit" className="px-6 py-2 font-semibold text-white bg-green-600 rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
-              Guardar Persona
-            </button>
-          </div>
-        </form>
+        <StaffNewForm createStaff={createStaff} />
       </div>
     </main>
   );

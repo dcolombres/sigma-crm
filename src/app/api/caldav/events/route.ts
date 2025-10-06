@@ -3,7 +3,17 @@ import prisma from '@/lib/prisma';
 import ical from 'node-ical';
 import { RRule } from 'rrule';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { authOptions } from "@/lib/auth";
+
+interface CalendarEvent {
+  type: string;
+  summary: string;
+  start: Date;
+  end: Date;
+  rrule?: {
+    options: Record<string, unknown>;
+  };
+}
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -35,7 +45,7 @@ export async function GET(request: NextRequest) {
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 5);
 
-    const toCalDavFormat = (date) => {
+    const toCalDavFormat = (date: Date) => {
         return date.toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
     };
 
@@ -86,8 +96,8 @@ export async function GET(request: NextRequest) {
       allEvents = { ...allEvents, ...parsed };
     }
 
-    const events = allEvents;
-    const occurrences = [];
+    const events = allEvents as Record<string, CalendarEvent>;
+    const occurrences: Array<Record<string, unknown>> = [];
 
     for (const key in events) {
       if (events.hasOwnProperty(key)) {

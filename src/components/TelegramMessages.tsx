@@ -61,7 +61,7 @@ export function TelegramMessages({ refreshing }) {
       {messages && messages.length > 0 ? (
         <ul className="space-y-2">
           {messages.map((message, index) => (
-            <li key={index} className="text-xs bg-gray-100 p-2 rounded-md">
+            <li key={index} className="text-xs bg-background p-2 rounded-md">
               <p className="font-bold">{new Date(message.date).toLocaleString()}:</p>
               <p>{message.text}</p>
             </li>

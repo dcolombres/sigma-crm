@@ -3,7 +3,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 
-export function GitlabActivity({ refreshing }) {
+interface GitlabActivityProps {
+  refreshing: boolean;
+}
+
+export function GitlabActivity({ refreshing }: GitlabActivityProps) {
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState<string | null>(null);
   const [commits, setCommits] = useState([]);
@@ -22,7 +26,11 @@ export function GitlabActivity({ refreshing }) {
       const data = await response.json();
       setProjects(data);
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -42,7 +50,11 @@ export function GitlabActivity({ refreshing }) {
       const data = await response.json();
       setCommits(data);
     } catch (err) {
-      setError(err.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('An unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -81,7 +93,7 @@ export function GitlabActivity({ refreshing }) {
     <div>
       <select onChange={(e) => setSelectedProject(e.target.value)} className="mb-4">
         <option value="">Select a project</option>
-        {projects.map((project: any) => (
+        {projects.map((project: { id: string; name: string }) => (
           <option key={project.id} value={project.id}>
             {project.name}
           </option>
@@ -91,7 +103,7 @@ export function GitlabActivity({ refreshing }) {
       {isLoading && <p>Loading commits...</p>}
 
       <ul>
-        {commits.map((commit: any) => (
+        {commits.map((commit: { id: string; short_id: string; title: string; web_url: string }) => (
           <li key={commit.id} className="mb-2">
             <a href={commit.web_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
               {commit.short_id}: {commit.title}
