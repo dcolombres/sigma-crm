@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import Sidebar from './Sidebar';
-import Topbar from './Topbar';
+
 import { ToastProvider } from './ToastProvider';
 import { ReactNode, useState } from 'react';
 
@@ -28,7 +28,6 @@ export default function MainLayout({ children }: { children: ReactNode }) {
       <ToastProvider>
         <Sidebar isCollapsed={isSidebarCollapsed} toggleSidebar={toggleSidebar} />
         <div className={`transition-all duration-300 ${isSidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
-          <Topbar />
           <main className="p-8">
             {children}
           </main>

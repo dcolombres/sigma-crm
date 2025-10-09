@@ -13,11 +13,18 @@ function getOrderBy(sort: string, order: Prisma.SortOrder) {
   return { [sort]: order };
 }
 
-export default async function ProyectosPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default async function ProyectosPageComponent({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const page = Number(searchParams.page) || 1;
   const perPage = 10;
-  const sort = (searchParams.sort as string) || 'id';
-  const order = (searchParams.order as Prisma.SortOrder) || 'desc';
+  
+  const allowedSortBy = ['id', 'titulo', 'storyline', 'activo', 'tier', 'categoria', 'dependenciaActual'];
+  const sortBy = (searchParams.sort as string) || 'id';
+  const sort = allowedSortBy.includes(sortBy) ? sortBy : 'id';
+
+  const allowedOrder = ['asc', 'desc'];
+  const orderInput = (searchParams.order as string) || 'desc';
+  const order = allowedOrder.includes(orderInput) ? orderInput as Prisma.SortOrder : 'desc';
+
   const search = (searchParams.search as string) || '';
 
   const orderBy = getOrderBy(sort, order);

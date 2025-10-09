@@ -5,6 +5,13 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Mantén un Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-10-09
+
+### Corregido
+- **Estabilidad del Proyecto:** Se solucionaron múltiples errores críticos de construcción y ejecución (`ENOENT`, `Connection closed`, 404 en assets) al bajar la versión de Next.js de una experimental (`v15.5.4`) a una estable (`v14.2.3`).
+- **Renderizado de Páginas:** Se corrigió un error de renderizado en el lado del servidor en la página de Proyectos que impedía su carga, causado por un manejo incorrecto de `searchParams`.
+- **Interfaz de Usuario:** Se eliminó el componente `Topbar` del layout principal para restaurar la interfaz a la versión deseada por el usuario (solo con sidebar).
+
 ## [1.1.0] - 2025-10-02
 
 ### Cambiado
