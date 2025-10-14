@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "@/components/AuthProvider";
+
 import MainLayout from "@/components/MainLayout";
 import BreadcrumbsWrapper from "@/components/BreadcrumbsWrapper";
 
@@ -21,12 +21,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} ${poppins.variable} font-sans antialiased bg-background`}>
-        <AuthProvider>
-          <MainLayout>
+        <MainLayout>
             <BreadcrumbsWrapper />
             {children}
           </MainLayout>
-        </AuthProvider>
       </body>
     </html>
   );

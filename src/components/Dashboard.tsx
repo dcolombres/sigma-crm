@@ -1,15 +1,9 @@
 'use client';
 
-import { RedmineIssues } from './RedmineIssues';
-import { GitlabActivity } from './GitlabActivity';
-import { TelegramMessages } from './TelegramMessages';
-import { CalendarEvents } from './CalendarEvents';
-import { ZimbraEmails } from './ZimbraEmails';
 import { useState, ReactNode } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { PieChart, BarChart } from '@mui/x-charts';
-import { User, Staff } from '@prisma/client';
 
 interface ChartData {
   id: string | number;
@@ -123,22 +117,20 @@ const BarChartCard = ({ title, data }: { title: string, data: ChartData[] }) => 
 };
 
 interface DashboardProps {
-  user: User & { staff: Staff | null };
+  visibility: DashboardVisibility;
   roleChartData: ChartData[];
   infraChartData: ChartData[];
   dbChartData: ChartData[];
   tierChartData: ChartData[];
 }
 
-const Dashboard = ({ user, roleChartData, infraChartData, dbChartData, tierChartData }: DashboardProps) => {
+const Dashboard = ({ visibility, roleChartData, infraChartData, dbChartData, tierChartData }: DashboardProps) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = (setter: (value: boolean) => void) => {
     setter(true);
     setTimeout(() => setter(false), 1000);
   };
-
-  const visibility = (user?.dashboard_card_visibility || {}) as DashboardVisibility;
 
   return (
     <div className="bg-background min-h-screen">

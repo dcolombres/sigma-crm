@@ -5,57 +5,71 @@ import { Prisma } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { getNumberOrNull, toDateOrNull, calculateAge, toBoolean } from '@/lib/utils';
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
 
-export async function updateProfile(prevState: { message: string; error: boolean; }, formData: FormData): Promise<{ message: string; error: boolean; }> {
-  'use server';
+export async function updateApiKey(prevState: { status?: string; message?: string } | null, formData: FormData) {
+  console.log('Form data:', Object.fromEntries(formData.entries()));
+  const staffId = Number(formData.get('staffId'));
+  const redmineApiKey = formData.get('redmine_api_key') as string;
+  const redmineUrl = formData.get('redmine_url') as string;
+  const gitlabApiKey = formData.get('gitlab_api_key') as string;
+  const gitlabUrl = formData.get('gitlab_url') as string;
+  const telegramBotToken = formData.get('telegram_bot_token') as string;
+  const telegramChatId = formData.get('telegram_chat_id') as string;
+  const glpiUrl = formData.get('glpi_url') as string;
+  const glpiApiKey = formData.get('glpi_api_key') as string;
+  const caldavUrl = formData.get('caldav_url') as string;
+  const caldavUsername = formData.get('caldav_username') as string;
+  const imapHost = formData.get('imap_host') as string;
+  const imapPort = Number(formData.get('imap_port'));
+  const imapSsl = formData.get('imap_ssl') === 'on';
+  const zimbraUsername = formData.get('zimbra_username') as string;
 
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    return { message: 'No autorizado.', error: true };
-  }
+  const redmineEnabled = formData.get('redmine_enabled') === 'on';
+  const gitlabEnabled = formData.get('gitlab_enabled') === 'on';
+  const telegramEnabled = formData.get('telegram_enabled') === 'on';
+  const glpiEnabled = formData.get('glpi_enabled') === 'on';
+  const caldavEnabled = formData.get('caldav_enabled') === 'on';
+  const imapEnabled = formData.get('imap_enabled') === 'on';
 
-  const currentPassword = formData.get('current_password') as string;
-  const newPassword = formData.get('new_password') as string;
-  const confirmPassword = formData.get('confirm_password') as string;
-
-  if (newPassword && newPassword !== confirmPassword) {
-    return { message: 'Las contraseñas no coinciden.', error: true };
+  if (!staffId) {
+    return { status: 'error', message: 'User not found.' };
   }
 
   try {
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+    const dataToUpdate: Prisma.StaffUpdateInput = {
+        redmine_api_key: redmineApiKey,
+        redmine_url: redmineUrl,
+        gitlab_api_key: gitlabApiKey,
+        gitlab_url: gitlabUrl,
+        telegram_bot_token: telegramBotToken,
+        telegram_chat_id: telegramChatId,
+        glpi_url: glpiUrl,
+        glpi_api_key: glpiApiKey,
+        caldav_url: caldavUrl,
+        caldav_username: caldavUsername,
+        imap_host: imapHost,
+        imap_port: imapPort,
+        imap_ssl: imapSsl,
+        zimbra_username: zimbraUsername,
+        dashboard_card_visibility: {
+          redmine: redmineEnabled,
+          gitlab: gitlabEnabled,
+          telegram: telegramEnabled,
+          glpi: glpiEnabled,
+          caldav: caldavEnabled,
+          imap: imapEnabled,
+        },
+    };
+
+    await prisma.staff.update({
+      where: { id: staffId },
+      data: dataToUpdate,
     });
-
-    if (!user || !user.password) {
-      return { message: 'Usuario no encontrado.', error: true };
-    }
-
-    if (currentPassword) {
-        const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
-        if (!isPasswordCorrect) {
-            return { message: 'La contraseña actual es incorrecta.', error: true };
-        }
-
-        if (newPassword) {
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
-            await prisma.user.update({
-                where: { id: user.id },
-                data: { password: hashedPassword },
-            });
-            return { message: 'Contraseña actualizada correctamente.', error: false };
-        }
-    } else if (newPassword) {
-        return { message: 'Debe proporcionar la contraseña actual para cambiarla.', error: true };
-    }
-
-    return { message: 'No se realizaron cambios.', error: false };
-
+    revalidatePath('/integrations');
+    return { status: 'success', message: 'API Key guardada correctamente.' };
   } catch (error) {
     console.error(error);
-    return { message: 'Error al actualizar el perfil.', error: true };
+    return { status: 'error', message: `Error al guardar la API Key: ${error.message}` };
   }
 }
 
@@ -418,85 +432,6 @@ export async function deleteTecnologia(id_proyecto: number, prevState: { message
   } catch (error) {
     console.error(error);
     return { message: 'Error al eliminar la tecnología.', error: true };
-  }
-}
-
-export async function updateApiKey(prevState: { status?: string; message?: string } | null, formData: FormData) {
-  console.log('Form data:', Object.fromEntries(formData.entries()));
-  const userId = Number(formData.get('userId'));
-  const redmineApiKey = formData.get('redmine_api_key') as string;
-  const redmineUrl = formData.get('redmine_url') as string;
-  const gitlabApiKey = formData.get('gitlab_api_key') as string;
-  const gitlabUrl = formData.get('gitlab_url') as string;
-  const telegramBotToken = formData.get('telegram_bot_token') as string;
-  const telegramChatId = formData.get('telegram_chat_id') as string;
-  const glpiUrl = formData.get('glpi_url') as string;
-  const glpiApiKey = formData.get('glpi_api_key') as string;
-  const caldavUrl = formData.get('caldav_url') as string;
-  const caldavUsername = formData.get('caldav_username') as string;
-  const caldavPassword = formData.get('caldav_password') as string;
-  const imapHost = formData.get('imap_host') as string;
-  const imapPort = Number(formData.get('imap_port'));
-  const imapSsl = formData.get('imap_ssl') === 'on';
-  const zimbraUsername = formData.get('zimbra_username') as string;
-  const zimbraPassword = formData.get('zimbra_password') as string;
-
-  const redmineEnabled = formData.get('redmine_enabled') === 'on';
-  const gitlabEnabled = formData.get('gitlab_enabled') === 'on';
-  const telegramEnabled = formData.get('telegram_enabled') === 'on';
-  const glpiEnabled = formData.get('glpi_enabled') === 'on';
-  const caldavEnabled = formData.get('caldav_enabled') === 'on';
-  const imapEnabled = formData.get('imap_enabled') === 'on';
-
-  if (!userId) {
-    return { status: 'error', message: 'User not found.' };
-  }
-
-  try {
-    const dataToUpdate: Prisma.UserUpdateInput = {
-        redmine_api_key: redmineApiKey,
-        redmine_url: redmineUrl,
-        gitlab_api_key: gitlabApiKey,
-        gitlab_url: gitlabUrl,
-        telegram_bot_token: telegramBotToken,
-        telegram_chat_id: telegramChatId,
-        glpi_url: glpiUrl,
-        glpi_api_key: glpiApiKey,
-        caldav_url: caldavUrl,
-        caldav_username: caldavUsername,
-        imap_host: imapHost,
-        imap_port: imapPort,
-        imap_ssl: imapSsl,
-        zimbra_username: zimbraUsername,
-        dashboard_card_visibility: {
-          redmine: redmineEnabled,
-          gitlab: gitlabEnabled,
-          telegram: telegramEnabled,
-          glpi: glpiEnabled,
-          caldav: caldavEnabled,
-          imap: imapEnabled,
-        },
-    };
-
-    if (caldavPassword) {
-        const hashedCaldavPassword = await bcrypt.hash(caldavPassword, 10);
-        dataToUpdate.caldav_password = hashedCaldavPassword;
-    }
-
-    if (zimbraPassword) {
-        const hashedZimbraPassword = await bcrypt.hash(zimbraPassword, 10);
-        dataToUpdate.zimbra_password = hashedZimbraPassword;
-    }
-
-    await prisma.user.update({
-      where: { id: userId },
-      data: dataToUpdate,
-    });
-    revalidatePath('/integrations');
-    return { status: 'success', message: 'API Key guardada correctamente.' };
-  } catch (error) {
-    console.error(error);
-    return { status: 'error', message: `Error al guardar la API Key: ${error.message}` };
   }
 }
 

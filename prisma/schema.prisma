@@ -64,33 +64,6 @@ model BaseDeDatos {
   proyectos ProyectoBaseDeDatos[]
 }
 
-// --- System User Model ---
-model User {
-  id                       Int      @id @default(autoincrement())
-  email                    String   @unique
-  password                 String?
-  rol                      String?
-  staffId                  Int?     @unique
-  staff                    Staff?   @relation(fields: [staffId], references: [id])
-  redmine_api_key          String?
-  redmine_url              String?
-  gitlab_api_key           String?
-  gitlab_url               String?
-  telegram_bot_token       String?
-  telegram_chat_id         String?
-  glpi_api_key             String?
-  glpi_url                 String?
-  zimbra_username          String?
-  zimbra_password          String?
-  caldav_url               String?
-  caldav_username          String?
-  caldav_password          String?
-  imap_host                String?
-  imap_port                Int?
-  imap_ssl                 Boolean?
-  dashboard_card_visibility Json?
-}
-
 // --- Staff Model (from CSV) ---
 model Staff {
   id                 Int             @id @default(autoincrement())
@@ -114,9 +87,25 @@ model Staff {
   presencialidad     String?
   cumpleanos         DateTime?
   edad               Int?
-  user               User?
   proyectos          ProyectoStaff[]
   integraciones      Integracion[]
+  redmine_api_key          String?
+  redmine_url              String?
+  gitlab_api_key           String?
+  gitlab_url               String?
+  telegram_bot_token       String?
+  telegram_chat_id         String?
+  glpi_api_key             String?
+  glpi_url                 String?
+  zimbra_username          String?
+  zimbra_password          String?
+  caldav_url               String?
+  caldav_username          String?
+  caldav_password          String?
+  imap_host                String?
+  imap_port                Int?
+  imap_ssl                 Boolean?
+  dashboard_card_visibility Json?
 }
 
 

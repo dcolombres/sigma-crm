@@ -1,23 +1,7 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
 import prisma from '@/lib/prisma';
 import Dashboard from '@/components/Dashboard';
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    return <div>Not authenticated</div>;
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-    include: { staff: true },
-  });
-
-  if (!user) {
-    return <div>User not found</div>;
-  }
-
   // Fetch data for charts
   const [roleChartData, infraChartData, dbChartData, tierChartData] = await Promise.all([
     prisma.staff.groupBy({
@@ -99,9 +83,13 @@ export default async function Home() {
     }))),
   ]);
 
+  // Fetch visibility settings from the first staff member
+  const firstStaff = await prisma.staff.findFirst();
+  const visibility = firstStaff?.dashboard_card_visibility as any || {};
+
   return (
     <Dashboard
-      user={user}
+      visibility={visibility}
       roleChartData={roleChartData}
       infraChartData={infraChartData}
       dbChartData={dbChartData}

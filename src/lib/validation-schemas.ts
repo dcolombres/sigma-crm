@@ -1,20 +1,58 @@
 import { z } from 'zod';
 
-export const UpdateProfileSchema = z.object({
-  current_password: z.string().optional(),
-  new_password: z.string().min(8, "La nueva contraseña debe tener al menos 8 caracteres.").optional(),
-  confirm_password: z.string().optional(),
-}).refine((data) => {
-  if (data.new_password && !data.current_password) {
-    return false; // New password provided, but current password is missing
-  }
-  if (data.new_password && data.new_password !== data.confirm_password) {
-    return false; // New password and confirm password do not match
-  }
-  return true;
-}, {
-  message: "Debe proporcionar la contraseña actual para cambiarla y las nuevas contraseñas deben coincidir.",
-  path: ["new_password"], // Path to the field that caused the error
+import { z } from 'zod';
+
+export const ApiKeySchema = z.object({
+  staffId: z.preprocess(
+    (a) => parseInt(z.string().parse(a), 10),
+    z.number().positive("ID de personal inválido.")
+  ),
+  redmine_api_key: z.string().optional(),
+  redmine_url: z.string().url("URL de Redmine inválida.").optional().or(z.literal("")),
+  gitlab_api_key: z.string().optional(),
+  gitlab_url: z.string().url("URL de GitLab inválida.").optional().or(z.literal("")),
+  telegram_bot_token: z.string().optional(),
+  telegram_chat_id: z.string().optional(),
+  glpi_url: z.string().url("URL de GLPI inválida.").optional().or(z.literal("")),
+  glpi_api_key: z.string().optional(),
+  caldav_url: z.string().url("URL de CalDAV inválida.").optional().or(z.literal("")),
+  caldav_username: z.string().optional(),
+  caldav_password: z.string().optional(),
+  imap_host: z.string().optional(),
+  imap_port: z.preprocess(
+    (a) => (a === '' ? null : parseInt(z.string().parse(a), 10)),
+    z.number().nullable().optional()
+  ),
+  imap_ssl: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
+  zimbra_username: z.string().optional(),
+  zimbra_password: z.string().optional(),
+  redmine_enabled: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
+  gitlab_enabled: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
+  telegram_enabled: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
+  glpi_enabled: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
+  caldav_enabled: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
+  imap_enabled: z.preprocess(
+    (a) => a === 'on',
+    z.boolean().optional()
+  ),
 });
 
 export const ClientSchema = z.object({
@@ -122,9 +160,9 @@ export const TecnologiaSchema = z.object({
 });
 
 export const ApiKeySchema = z.object({
-  userId: z.preprocess(
+  staffId: z.preprocess(
     (a) => parseInt(z.string().parse(a), 10),
-    z.number().positive("ID de usuario inválido.")
+    z.number().positive("ID de personal inválido.")
   ),
   redmine_api_key: z.string().optional(),
   redmine_url: z.string().url("URL de Redmine inválida.").optional().or(z.literal("")),

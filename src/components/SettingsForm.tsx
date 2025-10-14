@@ -4,34 +4,34 @@ import { useEffect, useRef, useState } from 'react';
 import { useFormState } from 'react-dom';
 import toast from 'react-hot-toast';
 import { updateApiKey, validateApiKey, validateGitlabApiKey, validateTelegramBotToken, validateGlpiApiKey, validateCaldavCredentials, sendTestTelegramMessage } from '@/lib/actions';
-import { User } from '@prisma/client';
+import { Staff } from '@prisma/client';
 
-export function SettingsForm({ user }: { user: User }) {
+export function SettingsForm({ staff }: { staff: Staff }) {
   const [state, formAction] = useFormState(updateApiKey, null);
   const formRef = useRef<HTMLFormElement>(null);
-  const [redmineApiKey, setRedmineApiKey] = useState(user.redmine_api_key || '');
-  const [redmineUrl, setRedmineUrl] = useState(user.redmine_url || '');
-  const [gitlabApiKey, setGitlabApiKey] = useState(user.gitlab_api_key || '');
-  const [gitlabUrl, setGitlabUrl] = useState(user.gitlab_url || '');
-  const [telegramBotToken, setTelegramBotToken] = useState(user.telegram_bot_token || '');
-  const [telegramChatId, setTelegramChatId] = useState(user.telegram_chat_id || '');
-  const [glpiUrl, setGlpiUrl] = useState(user.glpi_url || '');
-  const [glpiApiKey, setGlpiApiKey] = useState(user.glpi_api_key || '8faDyoHy3ni5u6FaHc2eOCut56LiLcR7rIL07ZWd');
-  const [caldavUrl, setCaldavUrl] = useState(user.caldav_url || '');
-  const [caldavUsername, setCaldavUsername] = useState(user.caldav_username || '');
-  const [caldavPassword, setCaldavPassword] = useState(user.caldav_password || '');
-  const [imapHost, setImapHost] = useState(user.imap_host || '');
-  const [imapPort, setImapPort] = useState(user.imap_port || '');
-  const [imapSsl, setImapSsl] = useState(user.imap_ssl || false);
-  const [zimbraUsername, setZimbraUsername] = useState(user.zimbra_username || '');
-  const [zimbraPassword, setZimbraPassword] = useState(user.zimbra_password || '');
+  const [redmineApiKey, setRedmineApiKey] = useState(staff.redmine_api_key || '');
+  const [redmineUrl, setRedmineUrl] = useState(staff.redmine_url || '');
+  const [gitlabApiKey, setGitlabApiKey] = useState(staff.gitlab_api_key || '');
+  const [gitlabUrl, setGitlabUrl] = useState(staff.gitlab_url || '');
+  const [telegramBotToken, setTelegramBotToken] = useState(staff.telegram_bot_token || '');
+  const [telegramChatId, setTelegramChatId] = useState(staff.telegram_chat_id || '');
+  const [glpiUrl, setGlpiUrl] = useState(staff.glpi_url || '');
+  const [glpiApiKey, setGlpiApiKey] = useState(staff.glpi_api_key || '8faDyoHy3ni5u6FaHc2eOCut56LiLcR7rIL07ZWd');
+  const [caldavUrl, setCaldavUrl] = useState(staff.caldav_url || '');
+  const [caldavUsername, setCaldavUsername] = useState(staff.caldav_username || '');
+  const [caldavPassword, setCaldavPassword] = useState(staff.caldav_password || '');
+  const [imapHost, setImapHost] = useState(staff.imap_host || '');
+  const [imapPort, setImapPort] = useState(staff.imap_port || '');
+  const [imapSsl, setImapSsl] = useState(staff.imap_ssl || false);
+  const [zimbraUsername, setZimbraUsername] = useState(staff.zimbra_username || '');
+  const [zimbraPassword, setZimbraPassword] = useState(staff.zimbra_password || '');
 
-  const [redmineVisible, setRedmineVisible] = useState(user.dashboard_card_visibility?.redmine ?? false);
-  const [gitlabVisible, setGitlabVisible] = useState(user.dashboard_card_visibility?.gitlab ?? false);
-  const [telegramVisible, setTelegramVisible] = useState(user.dashboard_card_visibility?.telegram ?? false);
-  const [glpiVisible, setGlpiVisible] = useState(user.dashboard_card_visibility?.glpi ?? false);
-  const [caldavVisible, setCaldavVisible] = useState(user.dashboard_card_visibility?.caldav ?? false);
-  const [imapVisible, setImapVisible] = useState(user.dashboard_card_visibility?.imap ?? false);
+  const [redmineVisible, setRedmineVisible] = useState(staff.dashboard_card_visibility?.redmine ?? false);
+  const [gitlabVisible, setGitlabVisible] = useState(staff.dashboard_card_visibility?.gitlab ?? false);
+  const [telegramVisible, setTelegramVisible] = useState(staff.dashboard_card_visibility?.telegram ?? false);
+  const [glpiVisible, setGlpiVisible] = useState(staff.dashboard_card_visibility?.glpi ?? false);
+  const [caldavVisible, setCaldavVisible] = useState(staff.dashboard_card_visibility?.caldav ?? false);
+  const [imapVisible, setImapVisible] = useState(staff.dashboard_card_visibility?.imap ?? false);
 
 
   useEffect(() => {
@@ -99,7 +99,7 @@ export function SettingsForm({ user }: { user: User }) {
 
   return (
     <form ref={formRef} action={formAction} className="bg-white p-8 rounded-lg shadow-md">
-      <input type="hidden" name="userId" value={user.id} />
+      <input type="hidden" name="staffId" value={staff.id} />
       
       <div className="mb-4 border-b pb-4">
         <div className="flex items-center justify-between">
