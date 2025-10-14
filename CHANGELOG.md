@@ -5,6 +5,15 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Mantén un Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-10-14
+
+### Removed
+- **Authentication:** Removed all authentication logic from the application, including the login page, user profiles, and password-protected routes. The application is now fully public.
+- **Dependencies:** Removed `next-auth` and `bcryptjs` dependencies.
+
+### Changed
+- **Database Schema:** Removed the `User` model and moved the relevant fields to the `Staff` model.
+
 ## [1.1.1] - 2025-10-09
 
 ### Corregido

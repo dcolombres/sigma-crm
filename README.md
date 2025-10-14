@@ -39,25 +39,11 @@ The project uses a `.env` file to manage environment variables. You will need to
 Create a file named `.env` and add the following content:
 
 ```
-# NextAuth.js configuration
-NEXTAUTH_SECRET=
-NEXTAUTH_URL=http://localhost:3000
-
 # Database configuration
 DATABASE_URL=file:./dev.db
 ```
 
 **Explanation of the variables:**
-
-- **`NEXTAUTH_SECRET`**: This is a secret key used by NextAuth.js to sign and encrypt cookies and tokens. You can generate a secure secret by running the following command in your terminal:
-
-  ```bash
-  openssl rand -hex 32
-  ```
-
-  Copy the output of the command and paste it after `NEXTAUTH_SECRET=`.
-
-- **`NEXTAUTH_URL`**: This is the base URL of your application. For local development, it should be `http://localhost:3000`.
 
 - **`DATABASE_URL`**: This is the connection string for your database. For local development, we are using a SQLite database, and the value should be `file:./dev.db`.
 
