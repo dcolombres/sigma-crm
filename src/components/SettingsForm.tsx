@@ -98,7 +98,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
   };
 
   return (
-    <form ref={formRef} action={formAction} className="bg-white p-8 rounded-lg shadow-md">
+    <form ref={formRef} action={formAction} className="bg-white p-8 shadow-md">
       <input type="hidden" name="staffId" value={staff.id} />
       
       <div className="mb-4 border-b pb-4">
@@ -123,7 +123,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="redmine_url"
             value={redmineUrl}
             onChange={(e) => setRedmineUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!redmineVisible}
           />
         </div>
@@ -136,10 +136,10 @@ export function SettingsForm({ staff }: { staff: Staff }) {
               id="redmine_api_key"
               value={redmineApiKey}
               onChange={(e) => setRedmineApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!redmineVisible}
             />
-            <button type="button" onClick={handleValidateRedmine} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!redmineVisible}>
+            <button type="button" onClick={handleValidateRedmine} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" disabled={!redmineVisible}>
               Validar
             </button>
           </div>
@@ -168,7 +168,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="gitlab_url"
             value={gitlabUrl}
             onChange={(e) => setGitlabUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!gitlabVisible}
           />
         </div>
@@ -182,10 +182,10 @@ export function SettingsForm({ staff }: { staff: Staff }) {
               id="gitlab_api_key"
               value={gitlabApiKey}
               onChange={(e) => setGitlabApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!gitlabVisible}
             />
-            <button type="button" onClick={handleValidateGitlab} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!gitlabVisible}>
+            <button type="button" onClick={handleValidateGitlab} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" disabled={!gitlabVisible}>
               Validar
             </button>
           </div>
@@ -215,10 +215,10 @@ export function SettingsForm({ staff }: { staff: Staff }) {
               id="telegram_bot_token"
               value={telegramBotToken}
               onChange={(e) => setTelegramBotToken(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!telegramVisible}
             />
-            <button type="button" onClick={handleValidateTelegram} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!telegramVisible}>
+            <button type="button" onClick={handleValidateTelegram} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" disabled={!telegramVisible}>
               Validar
             </button>
           </div>
@@ -233,10 +233,10 @@ export function SettingsForm({ staff }: { staff: Staff }) {
               id="telegram_chat_id"
               value={telegramChatId}
               onChange={(e) => setTelegramChatId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!telegramVisible}
             />
-            <button type="button" onClick={handleSendTestTelegramMessage} className="px-6 py-2 font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-75" disabled={!telegramVisible}>
+            <button type="button" onClick={handleSendTestTelegramMessage} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary" disabled={!telegramVisible}>
               Enviar Mensaje de Prueba
             </button>
           </div>
@@ -265,7 +265,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="glpi_url"
             value={glpiUrl}
             onChange={(e) => setGlpiUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!glpiVisible}
           />
         </div>
@@ -279,10 +279,10 @@ export function SettingsForm({ staff }: { staff: Staff }) {
               id="glpi_api_key"
               value={glpiApiKey}
               onChange={(e) => setGlpiApiKey(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!glpiVisible}
             />
-            <button type="button" onClick={handleValidateGlpi} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!glpiVisible}>
+            <button type="button" onClick={handleValidateGlpi} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" disabled={!glpiVisible}>
               Validar
             </button>
           </div>
@@ -311,7 +311,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="caldav_url"
             value={caldavUrl}
             onChange={(e) => setCaldavUrl(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!caldavVisible}
           />
         </div>
@@ -324,7 +324,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="caldav_username"
             value={caldavUsername}
             onChange={(e) => setCaldavUsername(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!caldavVisible}
           />
         </div>
@@ -338,10 +338,10 @@ export function SettingsForm({ staff }: { staff: Staff }) {
               id="caldav_password"
               value={caldavPassword}
               onChange={(e) => setCaldavPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+              className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
               disabled={!caldavVisible}
             />
-            <button type="button" onClick={handleValidateCaldav} className="px-6 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75" disabled={!caldavVisible}>
+            <button type="button" onClick={handleValidateCaldav} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" disabled={!caldavVisible}>
               Validar
             </button>
           </div>
@@ -370,7 +370,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="imap_host"
             value={imapHost}
             onChange={(e) => setImapHost(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
@@ -383,7 +383,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="imap_port"
             value={imapPort}
             onChange={(e) => setImapPort(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
@@ -396,7 +396,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="imap_ssl"
             checked={imapSsl}
             onChange={(e) => setImapSsl(e.target.checked)}
-            className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
+            className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
             disabled={!imapVisible}
           />
         </div>
@@ -409,7 +409,7 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="zimbra_username"
             value={zimbraUsername}
             onChange={(e) => setZimbraUsername(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
@@ -422,14 +422,14 @@ export function SettingsForm({ staff }: { staff: Staff }) {
             id="zimbra_password"
             value={zimbraPassword}
             onChange={(e) => setZimbraPassword(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             disabled={!imapVisible}
           />
         </div>
       </div>
 
       <div className="flex justify-end gap-4">
-        <button type="submit" className="px-6 py-2 font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-secondary focus:ring-opacity-75">
+        <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary">
           Guardar
         </button>
       </div>

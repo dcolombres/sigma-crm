@@ -3,30 +3,31 @@
 @theme {
   --disable-default-colors: true;
 
-  --color-white: rgb(255 255 255);
-  --color-black: rgb(0 0 0);
+  --color-white: #FFFFFF;
+  --color-black: #000000;
 
-  --color-primary: rgb(108 92 231);
-  --color-primary-dark: rgb(88 73 184);
-  --color-secondary: rgb(253 121 168);
-  --color-secondary-dark: rgb(225 106 144);
-  --color-accent: rgb(254 202 87);
-  --color-background: rgb(253 253 253);
-  --color-sidebar-bg: rgb(44 62 80);
-  --color-sidebar-text: rgb(253 253 253);
-  --color-sidebar-hover: rgb(92 106 121);
-  --color-topbar-bg: rgb(255 255 255);
-  --color-card-bg: rgb(255 255 255);
-  --color-text-primary: rgb(45 52 54);
-  --color-text-secondary: rgb(99 110 114);
-  --color-tag-green: rgb(0 184 148);
-  --color-tag-red: rgb(214 48 49);
-  --color-tag-yellow: rgb(253 203 110);
-  --color-gray-200: rgb(229 231 235);
-  --color-gray-300: rgb(209 213 219);
+  --color-primary: #232D4F;
+  --color-primary-dark: #1c243f;
+  --color-secondary: #3E5A7E;
+  --color-secondary-dark: #324864;
+  --color-accent: #E7BA61;
+  --color-background: #F2F2F2;
+  --color-sidebar-bg: #FFFFFF;
+  --color-sidebar-text: #555555;
+  --color-sidebar-hover: #e6e6e6;
+  --color-topbar-bg: #FFFFFF;
+  --color-card-bg: #FFFFFF;
+  --color-text-primary: #141414;
+  --color-text-secondary: #555555;
+  --color-tag-green: #2E7D33;
+  --color-tag-red: #C62828;
+  --color-tag-yellow: #E7BA61;
+  --color-gray-200: #F2F2F2;
+  --color-gray-300: #e6e6e6;
 }
 
 body {
   background-color: var(--color-background);
   color: var(--color-text-primary);
 }
+

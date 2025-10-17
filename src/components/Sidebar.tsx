@@ -20,11 +20,7 @@ const SidebarLink = ({ href, icon: Icon, isCollapsed, children }) => {
     <li>
       <Link
         href={href}
-        className={`flex items-center py-3 font-poppins font-medium text-sm transition-all duration-300 ${
-          isActive
-            ? 'bg-primary text-white'
-            : 'text-sidebar-text hover:bg-sidebar-hover'
-        } ${isCollapsed ? 'justify-center px-2' : 'px-4'}`}
+        className={`flex items-center py-3 font-roboto font-medium text-sm transition-all duration-300 ${isActive ? 'border-l-4 border-primary bg-gray-100 text-primary' : 'border-l-4 border-transparent hover:border-primary'} ${isCollapsed ? 'justify-center px-2' : 'px-4'}`}
       >
         <Icon className={`w-6 h-6 ${!isCollapsed ? 'mr-3' : ''}`} />
         {!isCollapsed && <span>{children}</span>}
@@ -35,10 +31,10 @@ const SidebarLink = ({ href, icon: Icon, isCollapsed, children }) => {
 
 const Sidebar = ({ isCollapsed, toggleSidebar }) => {
   return (
-    <div className={`bg-sidebar-bg h-full fixed border-r border-gray-700 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
+    <div className={`bg-white h-full fixed border-r border-gray-200 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="p-4 flex justify-center items-center gap-2">
         <Image src="/logosigma.svg" alt="SIGMA CRM Logo" width={41} height={50} priority />
-        {!isCollapsed && <span className="font-bold text-lg text-primary font-poppins">SIGMA</span>}
+        {!isCollapsed && <span className="font-bold text-lg text-dark font-roboto">SIGMA</span>}
       </div>
       <nav className="mt-4">
         <ul>
@@ -62,7 +58,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
       <div className="absolute bottom-0 w-full">
         <button
           onClick={toggleSidebar}
-          className="w-full flex items-center py-3 text-sidebar-text hover:bg-sidebar-hover transition-all duration-300"
+          className="w-full flex items-center py-3 transition-all duration-300 hover:bg-gray-100"
         >
           <ChevronDoubleLeftIcon className={`w-6 h-6 mx-auto transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} />
         </button>

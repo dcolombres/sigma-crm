@@ -5,6 +5,24 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Mantén un Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-10-17
+
+### Changed
+- **Improved UI/UX:**
+    - Homogenized the views for Staff, Clientes, and Integraciones to match the Proyectos view.
+    - Improved the main buttons in each section.
+    - Replaced the "Editar" and "Eliminar" buttons with icons.
+    - Removed all rounded borders from the application.
+    - Improved the sidebar style.
+    - Improved the search input style.
+
+### Fixed
+- **Bugfixes:**
+    - Fixed a bug in the Integraciones table where the "Función principal" column would exceed the table width.
+    - Fixed a build error in `ProyectosTable.tsx`.
+    - Fixed a runtime error in `ProyectosTable.tsx`.
+    - Fixed a runtime error in `Pagination.tsx`.
+
 ## [1.2.0] - 2025-10-14
 
 ### Removed

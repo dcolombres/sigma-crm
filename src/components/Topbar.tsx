@@ -14,7 +14,7 @@ const NavLink = ({ href, children }) => {
     return (
         <Link
             href={href}
-            className={`px-3 py-2 rounded-md text-sm font-poppins font-medium ${
+            className={`px-3 py-2 text-sm font-poppins font-medium ${
                 isActive
                     ? 'text-white bg-primary'
                     : 'text-text-primary hover:text-primary'
@@ -77,13 +77,13 @@ const SearchBar = () => {
             <input 
                 type="text" 
                 placeholder="Búsqueda global..." 
-                className="bg-white border border-gray-300 rounded-md pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-64"
+                className="bg-white border border-gray-300 pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-64"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setIsOpen(true)}
             />
             {isOpen && hasResults && (
-                <div className="absolute z-10 top-full mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg">
+                <div className="absolute z-10 top-full mt-2 w-full bg-white border border-gray-200 shadow-lg">
                     <ul className="py-1">
                         {results.proyectos.length > 0 && (
                             <>

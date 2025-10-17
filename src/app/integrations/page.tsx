@@ -1,20 +1,17 @@
 import prisma from '@/lib/prisma';
 import { SettingsForm } from '@/components/SettingsForm';
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
 
 export default async function IntegrationsPage() {
-  const session = await getServerSession(authOptions);
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+  const staff = await prisma.staff.findFirst();
 
-  if (!user) {
-    return <div>User not found</div>;
+  if (!staff) {
+    return <div>Staff not found</div>;
   }
 
   return (
     <div className="w-full">
       <h1 className="text-3xl font-bold text-primary mb-8 font-poppins">Integrations</h1>
-      <SettingsForm user={user} />
+      <SettingsForm staff={staff} />
     </div>
   );
 }

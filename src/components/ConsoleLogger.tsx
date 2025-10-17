@@ -64,11 +64,34 @@ const ConsoleLogger = () => {
   if (!isVisible) {
     return (
       <button
-        onClick={() => setIsVisible(true)}
-        className="fixed bottom-4 right-4 bg-blue-500 text-white p-2 rounded-full shadow-lg"
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed bottom-4 right-4 bg-blue-500 text-white p-2 shadow-lg"
       >
-        Show Logs
+        {isOpen ? 'Close' : 'Logs'}
       </button>
+      {isOpen && (
+        <div className="fixed bottom-4 right-4 w-full max-w-lg h-64 bg-gray-800 bg-opacity-90 text-white shadow-2xl z-50 flex flex-col">
+          <div className="flex justify-between items-center p-2 bg-gray-900">
+            <h2 className="text-lg font-bold">Console Logs</h2>
+            <button onClick={() => setIsOpen(false)} className="text-white">
+              X
+            </button>
+          </div>
+          <div
+            ref={logsContainerRef}
+            className="p-2 overflow-y-auto flex-grow"
+          >
+            {logs.map((log, index) => (
+              <div key={index} className="font-mono text-sm border-b border-gray-700 py-1">
+                {log}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
     );
   }
 

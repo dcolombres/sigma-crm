@@ -22,14 +22,12 @@ export default async function EditarTecnologiaPage({ params }: { params: Promise
   return (
     <main className="flex flex-col items-center min-h-screen p-8 bg-background">
       <div className="w-full max-w-4xl">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-primary">
-            {tecnologia ? `Editar Tecnología para ${id_proyecto}` : `Añadir Tecnología al Proyecto ${id_proyecto}`}
-          </h1>
-          <Link href={`/proyectos/${id_proyecto}`} className="text-sm font-medium text-primary hover:underline">
-            &larr; Volver al Proyecto
-          </Link>
-        </div>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-primary">Editar Tecnología del Proyecto</h1>
+        <Link href={`/proyectos/${id_proyecto}`} className="text-sm font-medium text-primary hover:underline no-underline">
+          Volver al Proyecto
+        </Link>
+      </div>
         
         <TecnologiaForm 
           id_proyecto={id_proyecto}

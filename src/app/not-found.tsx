@@ -9,8 +9,8 @@ export default function NotFound() {
       <p className="text-lg text-secondary mb-8">
         Lo sentimos, la página que estás buscando no existe o ha sido movida.
       </p>
-      <Link href="/" className="px-6 py-3 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75">
-        Volver al Dashboard
+      <Link href="/" className="px-6 py-3 font-semibold text-white bg-primary shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75 no-underline">
+        Volver al Inicio
       </Link>
     </div>
   );

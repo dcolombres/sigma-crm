@@ -33,22 +33,22 @@ const Card = ({ title, children, onRefresh }: { title: string, children: ReactNo
   };
 
   return (
-    <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200">
-      <div className="p-4 flex justify-between items-center cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
-        <h3 className="text-lg font-bold text-primary font-poppins">{title}</h3>
+    <div className="panel panel-default">
+      <div className="panel-heading flex justify-between items-center cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
+        <h3 className="panel-title">{title}</h3>
         <div className="flex items-center gap-2">
           {onRefresh && (
-            <button onClick={handleRefresh} className="p-1 rounded-full hover:bg-background">
-              <ArrowPathIcon className="h-5 w-5 text-secondary" />
+            <button onClick={handleRefresh}>
+              <ArrowPathIcon className="h-5 w-5" />
             </button>
           )}
-          <button className="p-1 rounded-full hover:bg-background">
-            {isOpen ? <ChevronUpIcon className="h-5 w-5 text-secondary" /> : <ChevronDownIcon className="h-5 w-5 text-secondary" />}
+          <button className="panel-toggle">
+            {isOpen ? <ChevronUpIcon className="h-5 w-5" /> : <ChevronDownIcon className="h-5 w-5" />}
           </button>
         </div>
       </div>
       {isOpen && (
-        <div className="p-4 border-t border-gray-200">
+        <div className="panel-body">
           {children}
         </div>
       )}
@@ -59,19 +59,23 @@ const Card = ({ title, children, onRefresh }: { title: string, children: ReactNo
 const PieChartCard = ({ title, data }: { title: string, data: ChartData[] }) => {
   if (!data || data.length === 0) {
     return (
-        <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
-            <div className="flex items-center justify-center h-[250px]">
-                <p className="text-secondary">No hay datos para mostrar.</p>
+        <div className="panel panel-default">
+            <div className="panel-heading">
+              <h3 className="panel-title">{title}</h3>
+            </div>
+            <div className="panel-body flex items-center justify-center h-[250px]">
+                <p className="text-muted">No hay datos para mostrar.</p>
             </div>
         </div>
     );
   }
 
   return (
-    <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
-        <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
-        <div style={{ width: '100%', height: 250 }}>
+    <div className="panel panel-default">
+        <div className="panel-heading">
+          <h3 className="panel-title">{title}</h3>
+        </div>
+        <div className="panel-body" style={{ width: '100%', height: 250 }}>
             <PieChart
                 series={[
                     {
@@ -92,19 +96,23 @@ const PieChartCard = ({ title, data }: { title: string, data: ChartData[] }) => 
 const BarChartCard = ({ title, data }: { title: string, data: ChartData[] }) => {
     if (!data || data.length === 0) {
         return (
-            <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
-                <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
-                <div className="flex items-center justify-center h-[250px]">
-                    <p className="text-secondary">No hay datos para mostrar.</p>
+            <div className="panel panel-default">
+                <div className="panel-heading">
+                  <h3 className="panel-title">{title}</h3>
+                </div>
+                <div className="panel-body flex items-center justify-center h-[250px]">
+                    <p className="text-muted">No hay datos para mostrar.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-card-bg rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 className="text-lg font-bold text-primary mb-4 font-poppins">{title}</h3>
-            <div style={{ width: '100%', height: 250 }}>
+        <div className="panel panel-default">
+            <div className="panel-heading">
+              <h3 className="panel-title">{title}</h3>
+            </div>
+            <div className="panel-body" style={{ width: '100%', height: 250 }}>
                 <BarChart
                     dataset={data}
                     yAxis={[{ scaleType: 'band', dataKey: 'label' }]}
@@ -135,11 +143,11 @@ const Dashboard = ({ visibility, roleChartData, infraChartData, dbChartData, tie
   return (
     <div className="bg-background min-h-screen">
       <div className="p-8">
-        <h2 className="text-3xl font-extrabold text-primary mb-8 font-poppins">Dashboard</h2>
+        <h1 className="h1">Dashboard</h1>
 
         {/* Global Charts Section */}
         <div className="mb-8">
-            <h3 className="text-2xl font-bold text-primary mb-4 font-poppins">Estadísticas Globales</h3>
+            <h2 className="h2">Estadísticas Globales</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <BarChartCard title="Roles de Staff" data={roleChartData} />
                 <PieChartCard title="Distribución por Tier" data={tierChartData} />

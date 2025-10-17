@@ -2,23 +2,15 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import Imap from 'imap';
 import { simpleParser } from 'mailparser';
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
+  const staff = await prisma.staff.findFirst();
 
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-
-  if (!user || !user.imap_host || !user.imap_port || !user.zimbra_username || !user.zimbra_password) {
+  if (!staff || !staff.imap_host || !staff.imap_port || !staff.zimbra_username || !staff.zimbra_password) {
     return NextResponse.json({ error: 'IMAP settings not configured.' }, { status: 401 });
   }
 
-  const { imap_host, imap_port, zimbra_username, zimbra_password, imap_ssl } = user;
+  const { imap_host, imap_port, zimbra_username, zimbra_password, imap_ssl } = staff;
 
   const imapConfig = {
     user: zimbra_username,

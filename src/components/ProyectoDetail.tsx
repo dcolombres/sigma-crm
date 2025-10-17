@@ -135,7 +135,11 @@ interface ProyectoDetailProps {
 function DeleteProjectButton() {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={pending} className="px-4 py-2 font-semibold text-white bg-tag-red rounded-lg shadow-md hover:bg-tag-red/90 disabled:bg-tag-red/50">
+    <button
+      type="submit"
+      disabled={pending}
+      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-danger hover:bg-danger-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger"
+    >
       {pending ? 'Eliminando...' : 'Eliminar'}
     </button>
   );
@@ -144,7 +148,11 @@ function DeleteProjectButton() {
 function DeleteTecnologiaButton() {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={pending} className="px-4 py-2 text-sm font-semibold text-white bg-tag-red rounded-lg shadow-md hover:bg-tag-red/90 disabled:bg-tag-red/50">
+    <button
+      type="submit"
+      disabled={pending}
+      className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium shadow-sm text-white bg-danger hover:bg-danger-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger"
+    >
       {pending ? 'Eliminando...' : 'Eliminar Tecnología'}
     </button>
   );
@@ -213,10 +221,10 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
             <p className="mt-1 text-lg text-secondary">{proyecto.storyline}</p>
           </div>
           <div className="flex gap-2">
-            <button onClick={handleExportPDF} className="px-4 py-2 font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark">
+            <button onClick={handleExportPDF} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary no-underline">
               Exportar a PDF
             </button>
-            <Link href={`/proyectos/${proyecto.id}/editar`} className="px-4 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark">
+            <Link href={`/proyectos/${proyecto.id}/editar`} className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary no-underline">
               Editar
             </Link>
             <form action={deleteProjectDispatch}>
@@ -227,7 +235,7 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Left Column */}
-          <div className="md:col-span-2 bg-white p-8 rounded-lg shadow-md">
+          <div className="md:col-span-2 bg-white p-8 shadow-md">
             <h2 className="text-xl font-bold text-primary mb-6">Detalles del Proyecto</h2>
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8">
               <DetailItem label="Categoría" value={proyecto.categoria?.nombre} />
@@ -235,21 +243,21 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
               <DetailItem label="Dependencia Origen" value={proyecto.dependenciaOrigen?.nombre} />
               <DetailItem label="Dependencia Actual" value={proyecto.dependenciaActual?.nombre} />
               <DetailItem label="Tier" value={proyecto.tier} />
-              <DetailItem label="Estado" value={<span className={`px-2 py-1 text-xs font-semibold rounded-full ${proyecto.activo ? 'bg-tag-green/20 text-tag-green' : 'bg-tag-red/20 text-tag-red'}`}>{proyecto.activo ? 'Activo' : 'Inactivo'}</span>} />
+              <DetailItem label="Estado" value={<span className={`px-2 py-1 text-xs font-semibold ${proyecto.activo ? 'bg-tag-green/20 text-tag-green' : 'bg-tag-red/20 text-tag-red'}`}>{proyecto.activo ? 'Activo' : 'Inactivo'}</span>} />
               <DetailItem label="Ticketera Interna" value={proyecto.url_ticketera_interna && <a href={proyecto.url_ticketera_interna} target="_blank" className="text-primary hover:underline">Enlace</a>} />
               <DetailItem label="Ticketera Externa" value={proyecto.url_ticketera_externa && <a href={proyecto.url_ticketera_externa} target="_blank" className="text-primary hover:underline">Enlace</a>} />
             </dl>
             {proyecto.captura_type && (
               <div className="mt-8">
                 <h3 className="text-lg font-medium text-primary mb-2">Captura de Pantalla</h3>
-                <Image src={`/api/proyectos/${proyecto.id}/captura`} alt={`Captura de ${proyecto.titulo}`} width={500} height={300} className="rounded-lg border border-gray-200" />
+                <Image src={`/api/proyectos/${proyecto.id}/captura`} alt={`Captura de ${proyecto.titulo}`} width={500} height={300} className="border border-gray-200" />
               </div>
             )}
           </div>
 
           {/* Right Column */}
           <div className="flex flex-col gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 shadow-md">
               <h3 className="text-lg font-bold text-primary mb-4">Tecnología</h3>
               {proyecto.tecnologia ? (
                 <div className="flex flex-col gap-4">
@@ -267,7 +275,7 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
                     <DetailItem label="Mantenimiento y Soporte" value={proyecto.tecnologia.mantenimiento_soporte ? 'Sí' : 'No'} />
                   </dl>
                   <div className="flex gap-2 justify-end">
-                    <Link href={`/proyectos/${proyecto.id}/tecnologia/editar`} className="px-4 py-2 text-sm font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark">
+                    <Link href={`/proyectos/${proyecto.id}/tecnologia/editar`} className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary no-underline">
                       Editar Tecnología
                     </Link>
                     <form action={deleteTecnologiaDispatch}>
@@ -278,19 +286,19 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
               ) : (
                 <div className="text-center py-4">
                   <p className="text-sm text-secondary mb-4">No hay datos de tecnología para este proyecto.</p>
-                  <Link href={`/proyectos/${proyecto.id}/tecnologia/editar`} className="px-4 py-2 text-sm font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark">
+                  <Link href={`/proyectos/${proyecto.id}/tecnologia/editar`} className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium shadow-sm text-white bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary no-underline">
                     Añadir Tecnología
                   </Link>
                 </div>
               )}
             </div>
             
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 shadow-md">
                 <h3 className="text-lg font-bold text-primary mb-4">Staff Asignado</h3>
                 <div className="flex flex-col gap-4">
                     <ul className="space-y-3">
                         {proyecto.staff.map(s => (
-                            <li key={s.staff.id} className="flex items-center justify-between bg-background p-2 rounded-md">
+                            <li key={s.staff.id} className="flex items-center justify-between bg-background p-2">
                                 <div>
                                     <p className="text-sm font-medium text-primary">{s.staff.nombre_completo}</p>
                                     <p className="text-xs text-secondary">{s.staff.rol_staff}</p>
@@ -298,7 +306,7 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
                                 <form action={unassignStaff}>
                                     <input type="hidden" name="id_proyecto" value={proyecto.id} />
                                     <input type="hidden" name="id_staff" value={s.staff.id} />
-                                    <button type="submit" className="text-xs text-tag-red hover:text-tag-red/90 font-semibold">Desasignar</button>
+                                    <button type="submit" className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium shadow-sm text-white bg-danger hover:bg-danger-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-danger">Desasignar</button>
                                 </form>
                             </li>
                         ))}
@@ -307,33 +315,33 @@ export default function ProyectoDetail({ proyecto, allStaff, deleteProjectWithId
                     <hr />
                     <form action={assignStaff} className="flex items-center gap-2">
                         <input type="hidden" name="id_proyecto" value={proyecto.id} />
-                        <select name="id_staff" className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-primary focus:border-primary">
+                        <select name="id_staff" className="w-full px-3 py-2 border border-gray-300 shadow-sm text-sm focus:outline-none focus:ring-primary focus:border-primary">
                             <option value="">Asignar persona...</option>
                             {availableStaff.map(s => <option key={s.id} value={s.id}>{s.nombre_completo}</option>)}
                         </select>
-                        <button type="submit" className="px-4 py-2 text-sm font-semibold text-white bg-secondary rounded-lg shadow-md hover:bg-secondary-dark">Asignar</button>
+                        <button type="submit" className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium shadow-sm text-white bg-secondary hover:bg-secondary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary">Asignar</button>
                     </form>
                 </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 shadow-md">
                 <h3 className="text-lg font-bold text-primary mb-4">Clientes Asociados</h3>
                 <div className="flex flex-col gap-4">
                     <ul className="space-y-3">
                         {proyecto.clientes.map(c => (
-                            <li key={c.id} className="flex items-center justify-between bg-background p-2 rounded-md">
+                            <li key={c.id} className="flex items-center justify-between bg-background p-2">
                                 <div>
                                     <p className="text-sm font-medium text-primary">{c.nombre}</p>
                                     <p className="text-xs text-secondary">{c.email}</p>
                                 </div>
-                                <Link href={`/clientes/${c.id}/editar`} className="text-xs text-primary hover:text-primary-dark font-semibold">
+                                <Link href={`/clientes/${c.id}/editar`} className="text-xs text-primary hover:text-primary-dark font-semibold no-underline">
                                     Ver/Editar
                                 </Link>
                             </li>
                         ))}
                         {proyecto.clientes.length === 0 && <p className="text-sm text-secondary">No hay clientes asignados a este proyecto.</p>}
                     </ul>
-                    <Link href={`/clientes/nuevo?id_proyecto=${proyecto.id}`} className="mt-2 text-sm text-center font-semibold text-white bg-primary hover:bg-primary-dark p-2 rounded-md w-full">
+                    <Link href={`/clientes/nuevo?id_proyecto=${proyecto.id}`} className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary w-full no-underline">
                         + Añadir Cliente a este Proyecto
                     </Link>
                 </div>

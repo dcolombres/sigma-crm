@@ -1,7 +1,9 @@
 import prisma from '@/lib/prisma';
 import { Prisma } from '@prisma/client';
 import Link from 'next/link';
+import { deleteProject } from '@/lib/actions';
 import ProyectosTable from '@/components/ProyectosTable';
+import { FolderIcon } from '@heroicons/react/24/outline';
 
 function getOrderBy(sort: string, order: Prisma.SortOrder) {
   if (sort === 'categoria') {
@@ -48,23 +50,27 @@ export default async function ProyectosPage({ searchParams }: { searchParams: { 
   ]);
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-primary">Gestión de Proyectos</h1>
-        <Link href="/proyectos/nuevo" className="px-4 py-2 font-semibold text-white bg-primary rounded-lg shadow-md hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-75">
-            + Crear Proyecto
-        </Link>
-      </div>
+    <main className="flex flex-col items-center w-full min-h-screen p-8 bg-background">
+      <div className="w-full max-w-6xl">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-primary">Gestión de Proyectos</h1>
+          <Link href="/proyectos/nuevo" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary no-underline">
+            <FolderIcon className="h-5 w-5 mr-2" />
+            Crear Proyecto
+          </Link>
+        </div>
 
-      <ProyectosTable
-        proyectos={proyectos}
-        count={count}
-        page={page}
-        perPage={perPage}
-        sort={sort}
-        order={order}
-        search={search} // Pass search query to table
-      />
-    </div>
+        <ProyectosTable
+          proyectos={proyectos}
+          count={count}
+          page={page}
+          perPage={perPage}
+          sort={sort}
+          order={order}
+          search={search} // Pass search query to table
+          deleteProject={deleteProject}
+        />
+      </div>
+    </main>
   );
 }

@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from "@/lib/auth";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,22 +9,16 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Project ID is required.' }, { status: 400 });
   }
 
-  const session = await getServerSession(authOptions);
+  const staff = await prisma.staff.findFirst();
 
-  if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-
-  if (!user || !user.gitlab_api_key || !user.gitlab_url) {
+  if (!staff || !staff.gitlab_api_key || !staff.gitlab_url) {
     return NextResponse.json({ error: 'GitLab API key or URL not configured.' }, { status: 401 });
   }
 
   try {
-    const response = await fetch(`${user.gitlab_url}/api/v4/projects/${projectId}/repository/commits`, {
+    const response = await fetch(`${staff.gitlab_url}/api/v4/projects/${projectId}/repository/commits`, {
       headers: {
-        'PRIVATE-TOKEN': user.gitlab_api_key,
+        'PRIVATE-TOKEN': staff.gitlab_api_key,
       },
     });
 

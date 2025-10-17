@@ -25,12 +25,12 @@ export default async function EditarIntegracionPage({ params }: EditPageProps) {
   return (
     <main className="flex flex-col items-center min-h-screen p-8 bg-background">
       <div className="w-full">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-primary">Editar Integración: {integracion.nombre}</h1>
-            <Link href="/integraciones" className="text-sm font-medium text-primary hover:underline">
-                &larr; Volver a la lista
-            </Link>
-        </div>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-primary">Editar Integración</h1>
+        <Link href="/integraciones" className="text-sm font-medium text-primary hover:underline no-underline">
+          Volver a Integraciones
+        </Link>
+      </div>
         
         <IntegracionEditForm
           integracion={integracion}
