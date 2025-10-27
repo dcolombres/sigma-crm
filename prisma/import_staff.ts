@@ -72,26 +72,23 @@ async function main() {
     }
 
     const staffData = {
-      nombre_completo,
       email,
+      nombres: nombres || '',
+      apellidos: apellidos || '',
       contrato: contrato || null,
       rol_staff: rol_staff || null,
-      nombres: nombres || null,
-      apellidos: apellidos || null,
-      activo: activo_str ? toBoolean(activo_str) : null,
+      activo: activo_str ? toBoolean(activo_str) : true, // Default to true
       comentario: comentario || null,
-      proyectos_q: toNumberOrNull(proyectos_q_str),
       modalidad: modalidad || null,
       experiencia: experiencia || null,
       origen: origen || null,
       skills: skills || null,
       desempeno_ley_dto: desempeno_ley_dto || null,
-      hhee: hhee_str ? toBoolean(hhee_str) : null,
-      ur: ur_str ? toBoolean(ur_str) : null,
+      hhee: hhee_str ? toBoolean(hhee_str) : false, // Default to false
+      ur: ur_str ? toBoolean(ur_str) : false, // Default to false
       coordinacion: coordinacion || null,
       presencialidad: presencialidad || null,
       cumpleanos: toISOStringOrNull(cumpleanos_str),
-      edad: toNumberOrNull(edad_str),
     };
 
     try {
@@ -101,7 +98,7 @@ async function main() {
         update: staffData,
         create: staffData,
       });
-      console.log(`Successfully created/updated staff: ${staff.nombre_completo} (${staff.email})`);
+      console.log(`Successfully created/updated staff: ${staff.nombres} ${staff.apellidos} (${staff.email})`);
 
       // Create a corresponding user if it doesn't exist
       const user = await prisma.user.findUnique({ where: { email } });
@@ -111,8 +108,12 @@ async function main() {
           data: {
             email: email,
             password: hashedPassword, // Store the hashed password
-            rol: rol_staff || 'user', // Use staff role as user role, or default to 'user'
-            staffId: staff.id,
+            role: rol_staff || 'user', // Use staff role as user role, or default to 'user'
+            staff: {
+              connect: {
+                id: staff.id,
+              },
+            },
           },
         });
         console.log(`Successfully created user for: ${email}`);

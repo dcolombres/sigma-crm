@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -20,21 +20,18 @@ export async function GET(request: Request) {
   try {
     switch (type) {
       case 'proyectos':
-        const proyecto = await prisma.proyecto.findUnique({ where: { id: numericId }, select: { titulo: true } });
-        name = proyecto?.titulo || null;
+        const proyecto = await prisma.proyecto.findUnique({ where: { id: numericId }, select: { nombre: true } });
+        name = proyecto?.nombre || null;
         break;
       case 'staff':
-        const staff = await prisma.staff.findUnique({ where: { id: numericId }, select: { nombre_completo: true } });
-        name = staff?.nombre_completo || null;
+        const staff = await prisma.staff.findUnique({ where: { id: numericId }, select: { nombres: true, apellidos: true } });
+        name = staff ? `${staff.nombres} ${staff.apellidos}` : null;
         break;
       case 'clientes':
         const cliente = await prisma.cliente.findUnique({ where: { id: numericId }, select: { nombre: true } });
         name = cliente?.nombre || null;
         break;
-      case 'integraciones':
-        const integracion = await prisma.integracion.findUnique({ where: { id: numericId }, select: { nombre: true } });
-        name = integracion?.nombre || null;
-        break;
+
       default:
         return NextResponse.json({ error: 'Invalid "type" parameter' }, { status: 400 });
     }

@@ -6,8 +6,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import UserMenu from './UserMenu';
 import { useState, useEffect, useRef } from 'react';
+import React from 'react';
 
-const NavLink = ({ href, children }) => {
+interface NavLinkProps {
+  href: string;
+  children: React.ReactNode;
+}
+
+const NavLink = ({ href, children }: NavLinkProps) => {
     const pathname = usePathname();
     const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
 
@@ -27,7 +33,7 @@ const NavLink = ({ href, children }) => {
 
 const SearchBar = () => {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState({ proyectos: [], staff: [], clientes: [], integraciones: [] });
+    const [results, setResults] = useState({ proyectos: [], staff: [], clientes: [] });
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const searchRef = useRef(null);
@@ -40,7 +46,7 @@ const SearchBar = () => {
                 setResults(data);
                 setIsOpen(true);
             } else {
-                setResults({ proyectos: [], staff: [], clientes: [], integraciones: [] });
+                setResults({ proyectos: [], staff: [], clientes: [] });
                 setIsOpen(false);
             }
         }, 300); // 300ms delay
@@ -52,8 +58,8 @@ const SearchBar = () => {
 
     // Close dropdown when clicking outside
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (searchRef.current && !searchRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchRef.current && !(searchRef.current as any).contains(event.target)) {
                 setIsOpen(false);
             }
         };
@@ -63,13 +69,13 @@ const SearchBar = () => {
         };
     }, [searchRef]);
 
-    const handleResultClick = (type, id) => {
+    const handleResultClick = (type: string, id: number) => {
         setIsOpen(false);
         setQuery('');
         router.push(`/${type}/${id}`);
     };
 
-    const hasResults = results.proyectos.length > 0 || results.staff.length > 0 || results.clientes.length > 0 || results.integraciones.length > 0;
+    const hasResults = results.proyectos.length > 0 || results.staff.length > 0 || results.clientes.length > 0;
 
     return (
         <div className="relative hidden sm:block" ref={searchRef}>
@@ -88,13 +94,13 @@ const SearchBar = () => {
                         {results.proyectos.length > 0 && (
                             <>
                                 <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Proyectos</li>
-                                {results.proyectos.map((project) => (
+                                {results.proyectos.map((project: { id: number; nombre: string }) => (
                                     <li 
                                         key={`proj-${project.id}`}
                                         onClick={() => handleResultClick('proyectos', project.id)}
                                         className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
                                     >
-                                        {project.titulo}
+                                        {project.nombre}
                                     </li>
                                 ))}
                             </>
@@ -102,41 +108,27 @@ const SearchBar = () => {
                         {results.staff.length > 0 && (
                             <>
                                 <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Staff</li>
-                                {results.staff.map((person) => (
+                                {results.staff.map((person: { id: number; nombres: string; apellidos: string; }) => (
                                     <li 
                                         key={`staff-${person.id}`}
                                         onClick={() => handleResultClick('staff', person.id)}
                                         className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
                                     >
-                                        {person.nombre_completo}
+                                        {`${person.nombres} ${person.apellidos}`}
                                     </li>
                                 ))}
-                            </> 
+                            </>
                         )}
                         {results.clientes.length > 0 && (
                             <>
                                 <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Clientes</li>
-                                {results.clientes.map((client) => (
+                                {results.clientes.map((client: { id: number; nombre: string; }) => (
                                     <li 
                                         key={`client-${client.id}`}
                                         onClick={() => handleResultClick('clientes', client.id)}
                                         className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
                                     >
                                         {client.nombre}
-                                    </li>
-                                ))}
-                            </>
-                        )}
-                        {results.integraciones.length > 0 && (
-                            <>
-                                <li className="px-4 py-2 text-xs font-bold text-primary uppercase">Integraciones</li>
-                                {results.integraciones.map((integration) => (
-                                    <li 
-                                        key={`int-${integration.id}`}
-                                        onClick={() => handleResultClick('integraciones', integration.id)}
-                                        className="px-4 py-2 text-sm text-text-secondary hover:bg-background cursor-pointer"
-                                    >
-                                        {integration.nombre}
                                     </li>
                                 ))}
                             </>

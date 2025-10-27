@@ -68,3 +68,10 @@ El script `seed.ts` está diseñado principalmente para **agregar** datos de for
 
 - **Para modificar un nombre:** Es mejor cambiarlo directamente en el array del `seed.ts` y volver a ejecutar el `seed`. Sin embargo, esto creará una nueva entrada y no eliminará la antigua. La forma correcta sería escribir un script de migración, pero para desarrollo, puedes ajustarlo directamente en la base de datos con Prisma Studio (`npx prisma studio`).
 - **Para eliminar una opción:** La forma más segura es hacerlo directamente en la base de datos, preferiblemente con Prisma Studio (`npx prisma studio`), para evitar problemas de integridad de datos si la opción ya está siendo usada por algún proyecto.
+
+
+## Migrations
+
+"db:migrate:dpr": "npx tsx prisma/migrate_dpr.ts",                                                                 │
+"db:migrate:sigma": "npx tsx prisma/migrate_sigma.ts",                                                             │
+"db:migrate:staff": "npx tsx prisma/migrate_staff.ts",

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { ChevronRightIcon } from '@heroicons/react/24/solid';
 
 type BreadcrumbItem = {
   href: string;

@@ -1,11 +1,11 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import { createClient } from '@/lib/actions';
 import ClienteNewForm from '@/components/ClienteNewForm';
 
-export default async function NuevoClientePage({ searchParams }: { searchParams: Promise<{ id_proyecto?: string }> }) {
-  const resolvedSearchParams = await searchParams;
-  const proyectos = await prisma.proyecto.findMany({ orderBy: { titulo: 'asc' } });
+export default async function NuevoClientePage({ searchParams }: { searchParams: { id_proyecto?: string } }) {
+  const resolvedSearchParams = searchParams;
+  const proyectos = await prisma.proyecto.findMany({ orderBy: { nombre: 'asc' } });
   const preselectedProjectId = resolvedSearchParams.id_proyecto;
 
   return (

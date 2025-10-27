@@ -1,45 +1,49 @@
-'use client';
-
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 interface PaginationProps {
-  count: number;
   page: number;
-  perPage: number;
+  totalPages: number;
 }
 
-export default function Pagination({ count, page, perPage }: PaginationProps) {
+export default function Pagination({ page, totalPages }: PaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const totalPages = Math.ceil(count / perPage);
 
-  const createPageURL = (pageNumber: number) => {
+  const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', pageNumber.toString());
     return `${pathname}?${params.toString()}`;
   };
 
-  if (totalPages <= 1) {
-    return null;
-  }
+  // Generate page numbers with ellipsis
+  const generatePageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const delta = 2; // Number of pages to show around current page
+    
+    for (let i = 1; i <= totalPages; i++) {
+      if (
+        i === 1 ||
+        i === totalPages ||
+        (i >= page - delta && i <= page + delta)
+      ) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== '...') {
+        pages.push('...');
+      }
+    }
+    
+    return pages;
+  };
 
-  const pageNumbers = [];
-  for (let i = 1; i <= totalPages; i++) {
-    pageNumbers.push(i);
-  }
+  const pageNumbers = generatePageNumbers();
 
   return (
-    <nav aria-label="Page navigation">
-      <ul className="pagination justify-content-center">
-        <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-          <Link className="page-link no-underline" href={createPageURL(page - 1)} aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </Link>
-        </li>
+    <nav>
+      <ul className="pagination">
         {pageNumbers.map((pageNumber, index) => (
           <li key={index} className={`page-item ${pageNumber === page ? 'active' : ''}`}>
-            {pageNumber === '...' ? (
+            {typeof pageNumber === 'string' ? (
               <span className="page-link">...</span>
             ) : (
               <Link className="page-link no-underline" href={createPageURL(pageNumber)}>
@@ -48,11 +52,6 @@ export default function Pagination({ count, page, perPage }: PaginationProps) {
             )}
           </li>
         ))}
-        <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-          <Link className="page-link no-underline" href={createPageURL(page + 1)} aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </Link>
-        </li>
       </ul>
     </nav>
   );

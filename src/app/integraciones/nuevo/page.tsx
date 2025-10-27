@@ -1,26 +1,7 @@
-import prisma from '@/lib/prisma';
-import Link from 'next/link';
-import { createIntegration } from '@/lib/actions';
-import IntegracionNewForm from '@/components/IntegracionNewForm';
+import { notFound } from 'next/navigation';
 
-export default async function NuevoIntegracionPage() {
-  const staff = await prisma.staff.findMany({ orderBy: { nombre_completo: 'asc' } });
-
-  return (
-    <main className="flex flex-col items-center min-h-screen p-8 bg-background">
-      <div className="w-full max-w-2xl">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-primary">Añadir Nueva Integración</h1>
-        <Link href="/integraciones" className="text-sm font-medium text-primary hover:underline no-underline">
-          Volver a Integraciones
-        </Link>
-      </div>
-        
-        <IntegracionNewForm
-          createIntegration={createIntegration}
-          staff={staff}
-        />
-      </div>
-    </main>
-  );
+export default async function NuevaIntegracionPage() {
+  // This page is obsolete because the 'Integracion' model has been deleted.
+  // Returning notFound() to prevent access and resolve build errors.
+  notFound();
 }

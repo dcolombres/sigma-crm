@@ -4,35 +4,26 @@ import Link from 'next/link';
 import { Staff } from '@prisma/client';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useFormStatus, useFormState } from 'react-dom';
 import toast from 'react-hot-toast';
 import Pagination from './Pagination';
-
+import ResponsiveTable from './ResponsiveTable';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 interface StaffTableProps {
   staff: Staff[];
-  count: number;
   page: number;
-  perPage: number;
+  totalPages: number;
   sort: string;
   order: string;
   search: string;
-  deleteStaff: (id: number, prevState: { message: string; error: boolean; }, formData: FormData) => Promise<{ message: string; error: boolean; }>;
+  deleteStaff: (id: number, prevState: any, formData: FormData) => Promise<{ message: string; error: boolean; }>;
 }
 
-function DeleteStaffButton() {
-  const { pending } = useFormStatus();
-  return (
-    <button type="submit" disabled={pending}>
-      <TrashIcon className="h-5 w-5 text-danger" />
-    </button>
-  );
-}
-
-function StaffTableRow({ person, deleteStaff }: { person: Staff, deleteStaff: StaffTableProps['deleteStaff'] }) {
+function StaffTableRow({ person, deleteStaff }: { person: StaffTableProps['staff'][0], deleteStaff: StaffTableProps['deleteStaff'] }) {
   const initialState = { message: "", error: false };
-  const [state, dispatch] = useFormState(deleteStaff.bind(null, person.id), initialState);
+  const deleteStaffWithId = deleteStaff.bind(null, person.id);
+  const [state, dispatch] = useFormState(deleteStaffWithId, initialState);
 
   useEffect(() => {
     if (state.message) {
@@ -48,11 +39,12 @@ function StaffTableRow({ person, deleteStaff }: { person: Staff, deleteStaff: St
     <tr>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
         <Link href={`/staff/${person.id}/editar`} className="no-underline">
-          {person.nombre_completo}
+          {`${person.nombres} ${person.apellidos}`}
         </Link>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.email}</td>
-      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.rol_staff ?? 'N/A'}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.rol_staff}</td>
+
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-4">
         <Link href={`/staff/${person.id}/editar`} className="text-primary hover:text-primary-dark no-underline p-2">
           <PencilIcon className="h-5 w-5" />
@@ -67,9 +59,7 @@ function StaffTableRow({ person, deleteStaff }: { person: Staff, deleteStaff: St
   );
 }
 
-import ResponsiveTable from './ResponsiveTable';
-
-export default function StaffTable({ staff, count, page, perPage, sort, order, search, deleteStaff }: StaffTableProps) {
+export default function StaffTable({ staff, page, totalPages, sort, order, search, deleteStaff }: StaffTableProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -120,7 +110,7 @@ export default function StaffTable({ staff, count, page, perPage, sort, order, s
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <Link href={createSortURL('nombre_completo')} className="no-underline">Nombre Completo</Link>
+              <Link href={createSortURL('nombres')} className="no-underline">Nombre</Link>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <Link href={createSortURL('email')} className="no-underline">Email</Link>
@@ -128,6 +118,7 @@ export default function StaffTable({ staff, count, page, perPage, sort, order, s
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               <Link href={createSortURL('rol_staff')} className="no-underline">Rol</Link>
             </th>
+
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Acciones
             </th>
@@ -140,14 +131,14 @@ export default function StaffTable({ staff, count, page, perPage, sort, order, s
             ))
           ) : (
             <tr>
-              <td colSpan={4} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                No hay personal para mostrar.
+              <td colSpan={5} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                No hay personal para mostrar. ¡Añade uno nuevo!
               </td>
             </tr>
           )}
         </tbody>
       </ResponsiveTable>
-      <Pagination count={count} page={page} perPage={perPage} />
+      <Pagination page={page} totalPages={totalPages} />
     </div>
   );
 }

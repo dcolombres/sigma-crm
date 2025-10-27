@@ -1,259 +1,159 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// --- Lookup Tables ---
-
-model Dependencia {
-  id              Int        @id @default(autoincrement())
-  nombre          String     @unique
-  proyectosOrigen Proyecto[] @relation("ProyectoOrigen")
-  proyectosActual Proyecto[] @relation("ProyectoActual")
-}
-
-model Categoria {
-  id            Int            @id @default(autoincrement())
-  nombre        String         @unique
-  proyectos     Proyecto[]
-  subcategorias Subcategoria[]
-}
-
-model Subcategoria {
-  id           Int        @id @default(autoincrement())
-  nombre       String     @unique
-  id_categoria Int?
-  categoria    Categoria? @relation(fields: [id_categoria], references: [id])
-  proyectos    Proyecto[]
-}
-
-model ControlVersiones {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @unique
-  tecnologias Tecnologia[]
-}
-
-model StatusPmo {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @unique
-  tecnologias Tecnologia[]
-}
-
-model StatusSalud {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @unique
-  tecnologias Tecnologia[]
-}
-
-model Lenguaje {
-  id        Int                @id @default(autoincrement())
-  nombre    String             @unique
-  proyectos ProyectoLenguaje[]
-}
-
-model BaseDeDatos {
-  id        Int                   @id @default(autoincrement())
-  nombre    String                @unique
-  proyectos ProyectoBaseDeDatos[]
-}
-
-// --- Staff Model (from CSV) ---
 model Staff {
-  id                 Int             @id @default(autoincrement())
-  nombre_completo    String
-  contrato           String?
-  rol_staff          String?         @map("rol")
-  nombres            String?
-  apellidos          String?
-  activo             Boolean?
-  comentario         String?
-  proyectos_q        Int?
-  modalidad          String?
-  experiencia        String?
-  origen             String?
-  email              String          @unique
-  skills             String?
-  desempeno_ley_dto  String?
-  hhee               Boolean?
-  ur                 Boolean?
-  coordinacion       String?
-  presencialidad     String?
-  cumpleanos         DateTime?
-  edad               Int?
-  proyectos          ProyectoStaff[]
-  integraciones      Integracion[]
-  redmine_api_key          String?
-  redmine_url              String?
-  gitlab_api_key           String?
-  gitlab_url               String?
-  telegram_bot_token       String?
-  telegram_chat_id         String?
-  glpi_api_key             String?
-  glpi_url                 String?
-  zimbra_username          String?
-  zimbra_password          String?
-  caldav_url               String?
-  caldav_username          String?
-  caldav_password          String?
-  imap_host                String?
-  imap_port                Int?
-  imap_ssl                 Boolean?
-  dashboard_card_visibility Json?
+  id                       Int          @id @default(autoincrement())
+  nombres                  String
+  apellidos                String
+  email                    String       @unique
+  rol_staff                String?
+  contrato                 String?
+  modalidad                String?
+  experiencia              String?
+  origen                   String?
+  skills                   String?
+  desempeno_ley_dto        String?
+  coordinacion             String?
+  presencialidad           String?
+  cumpleanos               String?
+  comentario               String?
+  activo                   Boolean      @default(true)
+  hhee                     Boolean      @default(false)
+  ur                       Boolean      @default(false)
+  proyectos                Proyecto[]   @relation("ProyectoToStaff")
+  proyectos_responsable    Proyecto[]   @relation("ResponsableProyecto")
+  proyectos_subresponsable Proyecto[]   @relation("SubresponsableProyecto")
+  User                     User?
 }
-
-
-// New Lookup Tables for Alojamiento
-model AlojamientoInfra {
-  id          Int        @id @default(autoincrement())
-  nombre      String     @unique
-  tecnologias Tecnologia[] @relation("AlojamientoInfra")
-}
-
-model AlojamientoInfraDB {
-  id          Int        @id @default(autoincrement())
-  nombre      String     @unique
-  tecnologias Tecnologia[] @relation("AlojamientoInfraDB")
-}
-
-
-// --- Main Entities ---
 
 model Proyecto {
-  id                    Int                     @id @default(autoincrement())
-  titulo                String
-  storyline             String?
-  activo                Boolean?                @default(true)
-  id_dependencia_origen Int?
-  id_dependencia_actual Int?
-  id_categoria          Int?
-  id_subcategoria       Int?
-  captura_data          Bytes?
-  captura_type          String?
-  url_ticketera_interna String?
-  url_ticketera_externa String?
-  tier                  Int?
-  urls                  String?
-  cantidad_recursos_asignados Int?
-
-  dependenciaOrigen     Dependencia?          @relation("ProyectoOrigen", fields: [id_dependencia_origen], references: [id])
-  dependenciaActual     Dependencia?          @relation("ProyectoActual", fields: [id_dependencia_actual], references: [id])
-  categoria             Categoria?            @relation(fields: [id_categoria], references: [id])
-  subcategoria          Subcategoria?         @relation(fields: [id_subcategoria], references: [id])
-  tecnologia            Tecnologia?
-  clientes              Cliente[]
-  staff                 ProyectoStaff[]
-  integraciones         ProyectoIntegracion[]
-  lenguajes             ProyectoLenguaje[]
-  bases_de_datos        ProyectoBaseDeDatos[]
+  id                      Int           @id @default(autoincrement())
+  nombre                  String
+  codigo_trazabilidad     String?
+  descripcion             String?
+  staff                   Staff[]       @relation("ProyectoToStaff")
+  id_responsable          Int?
+  responsable             Staff?        @relation("ResponsableProyecto", fields: [id_responsable], references: [id])
+  id_subresponsable       Int?
+  subresponsable          Staff?        @relation("SubresponsableProyecto", fields: [id_subresponsable], references: [id])
+  fecha_inicio            DateTime?
+  fecha_fin               DateTime?
+  id_status_redmine       Int?
+  status_redmine          String?
+  id_plataforma           Int?
+  plataforma              String?
+  id_area_funcional       Int?
+  area_funcional          String?
+  id_tipo_desarrollo      Int?
+  tipo_desarrollo         String?
+  id_etapa_actual         Int?
+  etapa_actual            String?
+  id_control_versiones    Int?
+  control_versiones       String?
+  url_control_versiones   String?
+  id_tipo_sistema         Int?
+  tipo_sistema            String?
+  id_alojamiento_infra    Int?
+  alojamiento_infra       String?
+  id_alojamiento_infra_db Int?
+  alojamiento_infra_db    String?
+  mantenimiento_soporte   Boolean?
+  id_status_pmo           Int?
+  status_pmo              String?
+  id_status_salud         Int?
+  status_salud            String?
+  anio_inicio_sistema     Int?
+  usuarios_internos       Int?
+  usuarios_externos       Int?
+  url_sistema             String?
+  url_sistema_desarrollo  String?
+  url_repositorio         String?
+  url_manual_tecnico      String?
+  url_manual_usuario      String?
+  url_documentacion       String?
+  url_incidencias         String?
+  url_changelog           String?
+  changelog               Boolean?
+  clientes                Cliente[]     @relation("ProyectoClientes")
 }
 
 model Cliente {
   id                      Int       @id @default(autoincrement())
-  id_proyecto             Int
   nombre                  String
+  id_proyecto             Int
+  proyecto                Proyecto  @relation("ProyectoClientes", fields: [id_proyecto], references: [id])
   email                   String?
   celular                 String?
   observacion             String?
+  activo                  Boolean   @default(true)
   fecha_inicio_desarrollo DateTime?
-  activo                  Boolean?  @default(true)
-  proyecto                Proyecto  @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
-  integraciones           ClienteIntegracion[]
 }
 
-model Tecnologia {
-  id                   Int      @id @default(autoincrement())
-  id_proyecto          Int      @unique
-  id_control_versiones Int?
-  changelog            Boolean? @default(false)
-  url_changelog        String?
-  id_alojamiento_infra Int?
-  alojamientoInfra     AlojamientoInfra? @relation("AlojamientoInfra", fields: [id_alojamiento_infra], references: [id])
-  id_alojamiento_infra_db Int?
-  alojamientoInfraDB   AlojamientoInfraDB? @relation("AlojamientoInfraDB", fields: [id_alojamiento_infra_db], references: [id])
-
-  mantenimiento_soporte Boolean? @default(false)
-  id_status_pmo        Int?
-  id_status_salud      Int?
-  anio_inicio_sistema  Int?
-  usuarios_internos    Int?     @default(0)
-  usuarios_externos    Int?     @default(0)
-
-  proyecto         Proyecto          @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
-  controlVersiones ControlVersiones? @relation(fields: [id_control_versiones], references: [id])
-  statusPmo        StatusPmo?        @relation(fields: [id_status_pmo], references: [id])
-  statusSalud      StatusSalud?      @relation(fields: [id_status_salud], references: [id])
+// Modelos de DPR
+model DPR_Area {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-model Integracion {
-  id                Int                   @id @default(autoincrement())
-  nombre            String
-  funcion_principal String?
-  documentacion     String?
-  id_responsable    Int?
-  responsable       Staff?                @relation(fields: [id_responsable], references: [id])
-  proyectos         ProyectoIntegracion[]
-  clientes          ClienteIntegracion[]
+model DPR_Plataforma {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-// --- Join Tables for Many-to-Many ---
-
-model ProyectoStaff {
-  proyecto    Proyecto @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
-  id_proyecto Int
-  staff       Staff    @relation(fields: [id_staff], references: [id], onDelete: Cascade)
-  id_staff    Int
-
-  @@id([id_proyecto, id_staff])
+model DPR_TipoDesarrollo {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-model ProyectoIntegracion {
-  proyecto       Proyecto    @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
-  id_proyecto    Int
-  integracion    Integracion @relation(fields: [id_integracion], references: [id], onDelete: Cascade)
-  id_integracion Int
-
-  @@id([id_proyecto, id_integracion])
+model DPR_EtapaActual {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-model ClienteIntegracion {
-  cliente        Cliente     @relation(fields: [id_cliente], references: [id], onDelete: Cascade)
-  id_cliente     Int
-  integracion    Integracion @relation(fields: [id_integracion], references: [id], onDelete: Cascade)
-  id_integracion Int
-
-  @@id([id_cliente, id_integracion])
+model DPR_ControlVersiones {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-model ProyectoLenguaje {
-  proyecto    Proyecto @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
-  id_proyecto Int
-  lenguaje    Lenguaje @relation(fields: [id_lenguaje], references: [id], onDelete: Cascade)
-  id_lenguaje Int
-
-  @@id([id_proyecto, id_lenguaje])
+model DPR_TipoSistema {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-model ProyectoBaseDeDatos {
-  proyecto         Proyecto    @relation(fields: [id_proyecto], references: [id], onDelete: Cascade)
-  id_proyecto      Int
-  base_de_datos    BaseDeDatos @relation(fields: [id_base_de_datos], references: [id], onDelete: Cascade)
-  id_base_de_datos Int
-
-  @@id([id_proyecto, id_base_de_datos])
+model DPR_AlojamientoInfra {
+  id     Int    @id @default(autoincrement())
+  nombre String
 }
 
-model TelegramMessage {
-  id         Int      @id @default(autoincrement())
-  message_id Int
-  chat_id    String
-  text       String
-  date       DateTime
-  created_at DateTime @default(now())
+model DPR_StatusPmo {
+  id     Int    @id @default(autoincrement())
+  nombre String
+}
+
+model DPR_StatusSalud {
+  id     Int    @id @default(autoincrement())
+  nombre String
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  staff     Staff    @relation(fields: [staffId], references: [id])
+  staffId   Int      @unique
+  role      String   @default("USER")
 }

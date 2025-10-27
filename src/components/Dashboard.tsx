@@ -12,14 +12,6 @@ interface ChartData {
   [key: string]: string | number | Date | null | undefined;
 }
 
-interface DashboardVisibility {
-  redmine?: boolean;
-  gitlab?: boolean;
-  telegram?: boolean;
-  glpi?: boolean;
-  caldav?: boolean;
-  imap?: boolean;
-}
 
 const Card = ({ title, children, onRefresh }: { title: string, children: ReactNode, onRefresh?: () => void }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -125,14 +117,13 @@ const BarChartCard = ({ title, data }: { title: string, data: ChartData[] }) => 
 };
 
 interface DashboardProps {
-  visibility: DashboardVisibility;
   roleChartData: ChartData[];
   infraChartData: ChartData[];
   dbChartData: ChartData[];
   tierChartData: ChartData[];
 }
 
-const Dashboard = ({ visibility, roleChartData, infraChartData, dbChartData, tierChartData }: DashboardProps) => {
+const Dashboard = ({ roleChartData, infraChartData, dbChartData, tierChartData }: DashboardProps) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = (setter: (value: boolean) => void) => {
@@ -158,34 +149,7 @@ const Dashboard = ({ visibility, roleChartData, infraChartData, dbChartData, tie
             </div>
         </div>
 
-        {/* User-specific Cards Section - NOW SINGLE COLUMN */}
-        <div className="grid grid-cols-1 gap-8">
-            {visibility.redmine && (
-            <Card title="Mis tickets de RedMine pendientes" onRefresh={() => handleRefresh(setRefreshing)}>
-                <RedmineIssues refreshing={refreshing} />
-            </Card>
-            )}
-            {visibility.imap && (
-            <Card title="Ultimos mails" onRefresh={() => handleRefresh(setRefreshing)}>
-                <ZimbraEmails refreshing={refreshing} />
-            </Card>
-            )}
-            {visibility.caldav && (
-            <Card title="Mi Agenda" onRefresh={() => handleRefresh(setRefreshing)}>
-                <CalendarEvents refreshing={refreshing} />
-            </Card>
-            )}
-            {visibility.gitlab && (
-            <Card title="git.produccion" onRefresh={() => handleRefresh(setRefreshing)}>
-                <GitlabActivity refreshing={refreshing} />
-            </Card>
-            )}
-            {visibility.telegram && (
-            <Card title="Telegram" onRefresh={() => handleRefresh(setRefreshing)}>
-                <TelegramMessages refreshing={refreshing} />
-            </Card>
-            )}
-        </div>
+
       </div>
     </div>
   );

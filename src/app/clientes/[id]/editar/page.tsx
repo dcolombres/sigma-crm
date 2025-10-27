@@ -1,42 +1,30 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { updateClient } from '@/lib/actions';
 import ClienteEditForm from '@/components/ClienteEditForm';
+import { updateClient } from '@/lib/actions';
 
-interface EditPageProps {
-  params: Promise<{ id: string }>;
-}
+export default async function EditarClientePage({ params }: { params: { id: string } }) {
+  const id = parseInt(params.id, 10);
+  if (isNaN(id)) {
+    notFound();
+  }
 
-export default async function EditarClientePage({ params }: EditPageProps) {
-  const { id: idString } = await params;
-  const id = Number(idString);
-  if (isNaN(id)) return notFound();
-
-  const [client, proyectos] = await Promise.all([
+  const [cliente, proyectos] = await Promise.all([
     prisma.cliente.findUnique({ where: { id } }),
-    prisma.proyecto.findMany({ orderBy: { titulo: 'asc' } }),
+    prisma.proyecto.findMany({ orderBy: { nombre: 'asc' } }),
   ]);
 
-  if (!client) return notFound();
+  if (!cliente) {
+    notFound();
+  }
 
-  const updateClientWithId = updateClient.bind(null, client.id);
+  const updateClientWithId = updateClient.bind(null, cliente.id);
 
   return (
-    <main className="flex flex-col items-center min-h-screen p-8 bg-background">
-      <div className="w-full max-w-2xl">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-primary">Editar Cliente</h1>
-        <Link href="/clientes" className="text-sm font-medium text-primary hover:underline no-underline">
-          Volver a Clientes
-        </Link>
-      </div>
-        
-        <ClienteEditForm
-          client={client}
-          proyectos={proyectos}
-          updateClientWithId={updateClientWithId}
-        />
+    <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50">
+      <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Editar Cliente</h1>
+        <ClienteEditForm client={cliente} updateClientWithId={updateClientWithId} proyectos={proyectos} />
       </div>
     </main>
   );

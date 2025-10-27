@@ -1,21 +1,19 @@
 import { headers } from 'next/headers';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import Breadcrumbs from './Breadcrumbs';
 
 const getEntityName = async (segment: string, id: number) => {
   switch (segment) {
     case 'proyectos':
-      const proyecto = await prisma.proyecto.findUnique({ where: { id }, select: { titulo: true } });
-      return proyecto?.titulo || `#${id}`;
+      const proyecto = await prisma.proyecto.findUnique({ where: { id }, select: { nombre: true } });
+      return proyecto?.nombre || `#${id}`;
     case 'staff':
-      const staff = await prisma.staff.findUnique({ where: { id }, select: { nombre_completo: true } });
-      return staff?.nombre_completo || `#${id}`;
+      const staff = await prisma.staff.findUnique({ where: { id }, select: { nombres: true, apellidos: true } });
+      return staff ? `${staff.nombres} ${staff.apellidos}` : `#${id}`;
     case 'clientes':
       const cliente = await prisma.cliente.findUnique({ where: { id }, select: { nombre: true } });
       return cliente?.nombre || `#${id}`;
-    case 'integraciones':
-      const integracion = await prisma.integracion.findUnique({ where: { id }, select: { nombre: true } });
-      return integracion?.nombre || `#${id}`;
+
     default:
       return `#${id}`;
   }

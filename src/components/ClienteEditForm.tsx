@@ -59,7 +59,7 @@ export default function ClienteEditForm({ client, proyectos, updateClientWithId 
             className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
           >
             <option value="">Seleccionar proyecto...</option>
-            {proyectos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}
+            {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
           </select>
         </div>
 
@@ -86,7 +86,7 @@ export default function ClienteEditForm({ client, proyectos, updateClientWithId 
           <textarea name="observacion" id="observacion" rows={3} defaultValue={client.observacion || ''} className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"></textarea>
         </div>
 
-        <div class="flex items-center">
+        <div className="flex items-center">
             <input type="checkbox" name="activo" id="activo" defaultChecked={client.activo || false} className="h-4 w-4 text-primary border-gray-300 focus:ring-primary" />
             <label htmlFor="activo" className="ml-2 block text-sm font-medium text-primary">Cliente Activo</label>
         </div>

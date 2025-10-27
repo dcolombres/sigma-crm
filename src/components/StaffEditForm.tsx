@@ -20,7 +20,7 @@ function SubmitButton() {
 }
 
 interface StaffEditFormProps {
-  staffMember: Staff & { proyectos: { id_proyecto: number }[] };
+  staffMember: Staff & { proyectos: Proyecto[] };
   allProyectos: Proyecto[];
   updateStaffWithId: (prevState: { message: string; error: boolean; }, formData: FormData) => Promise<{ message: string; error: boolean; }>;
 }
@@ -28,7 +28,7 @@ interface StaffEditFormProps {
 export default function StaffEditForm({ staffMember, allProyectos, updateStaffWithId }: StaffEditFormProps) {
   const initialState = { message: "", error: false };
   const [state, dispatch] = useFormState(updateStaffWithId, initialState);
-  const staffProjectIds = new Set(staffMember.proyectos.map(p => p.id_proyecto));
+  const staffProjectIds = new Set(staffMember.proyectos.map(p => p.id));
 
   useEffect(() => {
     if (state.message) {
@@ -122,7 +122,7 @@ export default function StaffEditForm({ staffMember, allProyectos, updateStaffWi
           >
               {allProyectos.map(proyecto => (
                   <option key={proyecto.id} value={proyecto.id}>
-                      {proyecto.titulo}
+                      {proyecto.nombre}
                   </option>
               ))}
           </select>

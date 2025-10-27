@@ -55,7 +55,7 @@ export default function ClienteNewForm({ createClient, proyectos, preselectedPro
             className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
           >
             <option value="">Seleccionar proyecto...</option>
-            {proyectos.map(p => <option key={p.id} value={p.id}>{p.titulo}</option>)}
+            {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
           </select>
         </div>
 

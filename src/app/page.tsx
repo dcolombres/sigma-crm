@@ -1,99 +1,78 @@
-import prisma from '@/lib/prisma';
-import Dashboard from '@/components/Dashboard';
+import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
+import Link from 'next/link';
+import ProyectosTable from '@/components/ProyectosTable';
+import { FolderIcon } from '@heroicons/react/24/outline';
+import { deleteProject } from '@/lib/actions';
 
-export default async function Home() {
-  // Fetch data for charts
-  const [roleChartData, infraChartData, dbChartData, tierChartData] = await Promise.all([
-    prisma.staff.groupBy({
-      by: ['rol_staff'],
-      _count: {
-        rol_staff: true,
+export default async function ProyectosPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const page = Number(searchParams.page) || 1;
+  const perPage = 10;
+  const sort = (searchParams.sort as string) || 'id';
+  const order = (searchParams.order as 'asc' | 'desc') || 'desc';
+  const search = (searchParams.search as string) || '';
+
+  const where: Prisma.ProyectoWhereInput = search
+    ?
+    {
+        OR: [
+          { nombre: { contains: search, mode: 'insensitive' } },
+          { descripcion: { contains: search, mode: 'insensitive' } },
+        ],
+      }
+    : {};
+
+  const [proyectosData, count] = await prisma.$transaction([
+    prisma.proyecto.findMany({
+      where,
+      include: {
+        clientes: true,
+        staff: true,
       },
-    }).then(data => data.map(item => ({
-      id: item.rol_staff || 'N/A',
-      label: item.rol_staff || 'N/A',
-      value: item._count.rol_staff,
-    }))),
-    prisma.tecnologia.groupBy({
-      by: ['id_alojamiento_infra'],
-      _count: {
-        id_alojamiento_infra: true,
+      orderBy: {
+        [sort]: order,
       },
-      where: {
-        id_alojamiento_infra: {
-          not: null,
-        },
-      },
-    }).then(async data => {
-      const infraNames = await prisma.alojamientoInfra.findMany({
-        where: {
-          id: {
-            in: data.map(item => item.id_alojamiento_infra!),
-          },
-        },
-        select: { id: true, nombre: true },
-      });
-      const nameMap = new Map(infraNames.map(infra => [infra.id, infra.nombre]));
-      return data.map(item => ({
-        id: item.id_alojamiento_infra!,
-        label: nameMap.get(item.id_alojamiento_infra!) || `ID ${item.id_alojamiento_infra}`,
-        value: item._count.id_alojamiento_infra,
-      }));
+      skip: (page - 1) * perPage,
+      take: perPage,
     }),
-    prisma.tecnologia.groupBy({
-      by: ['id_alojamiento_infra_db'],
-      _count: {
-        id_alojamiento_infra_db: true,
-      },
-      where: {
-        id_alojamiento_infra_db: {
-          not: null,
-        },
-      },
-    }).then(async data => {
-      const dbNames = await prisma.alojamientoInfraDB.findMany({
-        where: {
-          id: {
-            in: data.map(item => item.id_alojamiento_infra_db!),
-          },
-        },
-        select: { id: true, nombre: true },
-      });
-      const nameMap = new Map(dbNames.map(db => [db.id, db.nombre]));
-      return data.map(item => ({
-        id: item.id_alojamiento_infra_db!,
-        label: nameMap.get(item.id_alojamiento_infra_db!) || `ID ${item.id_alojamiento_infra_db}`,
-        value: item._count.id_alojamiento_infra_db,
-      }));
-    }),
-    prisma.proyecto.groupBy({
-      by: ['tier'],
-      _count: {
-        tier: true,
-      },
-      where: {
-        tier: {
-          not: null,
-        },
-      },
-    }).then(data => data.map(item => ({
-      id: item.tier!,
-      label: `Tier ${item.tier}`,
-      value: item._count.tier,
-    }))),
+    prisma.proyecto.count({ where }),
   ]);
 
-  // Fetch visibility settings from the first staff member
-  const firstStaff = await prisma.staff.findFirst();
-  const visibility = firstStaff?.dashboard_card_visibility as any || {};
+  const proyectos = proyectosData.map(p => ({
+    ...p,
+    cliente: p.clientes[0] || null,
+  }));
+
+  const totalPages = Math.ceil(count / perPage);
 
   return (
-    <Dashboard
-      visibility={visibility}
-      roleChartData={roleChartData}
-      infraChartData={infraChartData}
-      dbChartData={dbChartData}
-      tierChartData={tierChartData}
-    />
+    <main className="flex flex-col items-center w-full min-h-screen p-8 bg-background">
+      <div className="w-full max-w-6xl">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-primary">Gestión de Proyectos</h1>
+          <Link
+            href="/proyectos/nuevo"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary no-underline"
+          >
+            <FolderIcon className="h-5 w-5 mr-2" />
+            Crear Proyecto
+          </Link>
+        </div>
+
+        <ProyectosTable
+          proyectos={proyectos}
+          page={page}
+          totalPages={totalPages}
+          sort={sort}
+          order={order}
+          search={search}
+          deleteProject={deleteProject}
+        />
+      </div>
+    </main>
   );
 }

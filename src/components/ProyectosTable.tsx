@@ -1,37 +1,68 @@
 'use client';
 
 import Link from 'next/link';
-import { Proyecto, Categoria, Dependencia, Cliente } from '@prisma/client';
+import { Proyecto, Cliente } from '@prisma/client';
+import { useEffect, useState } from 'react';
+import { useFormStatus, useFormState } from 'react-dom';
+import toast from 'react-hot-toast';
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { useFormStatus } from 'react-dom';
 import Pagination from './Pagination';
-
+import ResponsiveTable from './ResponsiveTable';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 
+// Define the props, removing visibleColumns
 interface ProyectosTableProps {
-  proyectos: (Proyecto & { categoria: Categoria | null; dependenciaActual: Dependencia | null; clientes: Cliente[] })[];
-  count: number;
+  proyectos: (Proyecto & { cliente: Cliente | null })[];
   page: number;
-  perPage: number;
+  totalPages: number;
   sort: string;
   order: string;
   search: string;
-  deleteProject: (id: number, prevState: { message: string; error: boolean; }, formData: FormData) => Promise<{ message: string; error: boolean; }>;
+  deleteProject: (id: number, prevState: any, formData: FormData) => Promise<{ message: string; error: boolean; }>;
 }
 
-import ResponsiveTable from './ResponsiveTable';
+// A dedicated row component for better state management, like in ClientesTable
+function ProyectoTableRow({ proyecto, deleteProject }: { proyecto: ProyectosTableProps['proyectos'][0], deleteProject: ProyectosTableProps['deleteProject'] }) {
+  const initialState = { message: "", error: false };
+  // Bind the project ID to the delete action
+  const deleteProjectWithId = deleteProject.bind(null, proyecto.id);
+  const [state, dispatch] = useFormState(deleteProjectWithId, initialState);
 
-function DeleteProjectButton() {
-  const { pending } = useFormStatus();
+  useEffect(() => {
+    if (state.message) {
+      if (state.error) {
+        toast.error(state.message);
+      } else {
+        toast.success(state.message);
+      }
+    }
+  }, [state]);
+
   return (
-    <button type="submit" disabled={pending}>
-      <TrashIcon className="h-5 w-5 text-danger" />
-    </button>
+    <tr>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        <Link href={`/proyectos/${proyecto.id}/editar`} className="no-underline">
+          {proyecto.nombre}
+        </Link>
+      </td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{proyecto.cliente?.nombre || 'N/A'}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{proyecto.codigo_trazabilidad}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{proyecto.descripcion}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-4">
+        <Link href={`/proyectos/${proyecto.id}/editar`} className="text-primary hover:text-primary-dark no-underline p-2">
+          <PencilIcon className="h-5 w-5" />
+        </Link>
+        <form action={dispatch}>
+          <button type="submit" className="p-2">
+            <TrashIcon className="h-5 w-5 text-danger" />
+          </button>
+        </form>
+      </td>
+    </tr>
   );
 }
 
-export default function ProyectosTable({ proyectos, count, page, perPage, sort, order, search, deleteProject }: ProyectosTableProps) {
+export default function ProyectosTable({ proyectos, page, totalPages, sort, order, search, deleteProject }: ProyectosTableProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -55,7 +86,7 @@ export default function ProyectosTable({ proyectos, count, page, perPage, sort, 
     params.set('page', '1');
     router.push(`${pathname}?${params.toString()}`);
   };
-  
+
   useEffect(() => {
     setSearchValue(search);
   }, [search]);
@@ -71,7 +102,7 @@ export default function ProyectosTable({ proyectos, count, page, perPage, sort, 
           </div>
           <input
             type="text"
-            placeholder="Buscar por título o descripción..."
+            placeholder="Buscar por título, storyline..."
             value={searchValue}
             onChange={handleSearchChange}
             className="shadow-sm focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 pl-10"
@@ -82,19 +113,16 @@ export default function ProyectosTable({ proyectos, count, page, perPage, sort, 
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <Link href={createSortURL('titulo')} className="no-underline">Título</Link>
+              <Link href={createSortURL('nombre')} className="no-underline">Nombre</Link>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Cliente
+              <Link href={createSortURL('cliente.nombre')} className="no-underline">Cliente</Link>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <Link href={createSortURL('categoria')} className="no-underline">Categoría</Link>
+              <Link href={createSortURL('codigo_trazabilidad')} className="no-underline">Código Trazabilidad</Link>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <Link href={createSortURL('dependenciaActual')} className="no-underline">Dependencia</Link>
-            </th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              <Link href={createSortURL('activo')} className="no-underline">Estado</Link>
+              <Link href={createSortURL('descripcion')} className="no-underline">Descripción</Link>
             </th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Acciones
@@ -104,42 +132,18 @@ export default function ProyectosTable({ proyectos, count, page, perPage, sort, 
         <tbody className="bg-white divide-y divide-gray-200">
           {proyectos.length > 0 ? (
             proyectos.map((proyecto) => (
-              <tr key={proyecto.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  <Link href={`/proyectos/${proyecto.id}`} className="no-underline">
-                    {proyecto.titulo}
-                  </Link>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{proyecto.clientes?.[0]?.nombre ?? 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{proyecto.categoria?.nombre ?? 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{proyecto.dependenciaActual?.nombre ?? 'N/A'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold ${proyecto.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {proyecto.activo ? 'Activo' : 'Inactivo'}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-4">
-                  <Link href={`/proyectos/${proyecto.id}/editar`} className="text-primary hover:text-primary-dark no-underline p-2">
-                    <PencilIcon className="h-5 w-5" />
-                  </Link>
-                  <form action={deleteProject.bind(null, proyecto.id)}>
-                    <button type="submit" className="p-2">
-                      <TrashIcon className="h-5 w-5 text-danger" />
-                    </button>
-                  </form>
-                </td>
-              </tr>
+              <ProyectoTableRow key={proyecto.id} proyecto={proyecto} deleteProject={deleteProject} />
             ))
           ) : (
             <tr>
-              <td colSpan={6} className="text-center py-10 text-muted">
-                No hay proyectos para mostrar.
+              <td colSpan={5} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                No hay proyectos para mostrar. ¡Añade uno nuevo!
               </td>
             </tr>
           )}
         </tbody>
       </ResponsiveTable>
-      <Pagination count={count} page={page} perPage={perPage} />
+      <Pagination page={page} totalPages={totalPages} />
     </div>
   );
 }

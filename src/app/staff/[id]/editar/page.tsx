@@ -1,45 +1,38 @@
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { updateStaff } from '@/lib/actions';
 import StaffEditForm from '@/components/StaffEditForm';
+import { updateStaff } from '@/lib/actions';
 
-export default async function EditarStaffPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: idString } = await params;
-  const id = Number(idString);
-  if (isNaN(id)) return notFound();
+export default async function EditarStaffPage({ params }: { params: { id: string } }) {
+  const id = parseInt(params.id, 10);
+  if (isNaN(id)) {
+    notFound();
+  }
 
-  const [staffMember, allProyectos] = await Promise.all([
-    prisma.staff.findUnique({
-      where: { id },
-      include: {
-        proyectos: { select: { id_proyecto: true } }
-      }
-    }),
-    prisma.proyecto.findMany({ orderBy: { titulo: 'asc' } })
-  ]);
+  const staffMember = await prisma.staff.findUnique({ 
+    where: { id },
+    include: { proyectos: true },
+  });
 
-  if (!staffMember) return notFound();
-  
+  if (!staffMember) {
+    notFound();
+  }
+
+  const roles = [];
+  const proyectos = await prisma.proyecto.findMany();
+
   const updateStaffWithId = updateStaff.bind(null, staffMember.id);
 
   return (
-    <div className="w-full">
-        <div className="flex justify-between items-center mb-8">
-            <h1 className="text-2xl font-bold font-poppins text-primary">Editar Staff: {staffMember.nombre_completo}</h1>
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-primary">Editar Staff</h1>
-        <Link href="/staff" className="text-sm font-medium text-primary hover:underline no-underline">
-          Volver a Staff
-        </Link>
-      </div>
-        </div>
-        
-        <StaffEditForm
-          staffMember={staffMember}
-          allProyectos={allProyectos}
-          updateStaffWithId={updateStaffWithId}
+    <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50">
+      <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Editar Miembro del Staff</h1>
+        <StaffEditForm 
+          staffMember={staffMember} 
+          updateStaffWithId={updateStaffWithId} 
+          allProyectos={proyectos} 
         />
-    </div>
+      </div>
+    </main>
   );
 }

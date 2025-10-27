@@ -1,60 +1,5 @@
 import { z } from 'zod';
 
-import { z } from 'zod';
-
-export const ApiKeySchema = z.object({
-  staffId: z.preprocess(
-    (a) => parseInt(z.string().parse(a), 10),
-    z.number().positive("ID de personal inválido.")
-  ),
-  redmine_api_key: z.string().optional(),
-  redmine_url: z.string().url("URL de Redmine inválida.").optional().or(z.literal("")),
-  gitlab_api_key: z.string().optional(),
-  gitlab_url: z.string().url("URL de GitLab inválida.").optional().or(z.literal("")),
-  telegram_bot_token: z.string().optional(),
-  telegram_chat_id: z.string().optional(),
-  glpi_url: z.string().url("URL de GLPI inválida.").optional().or(z.literal("")),
-  glpi_api_key: z.string().optional(),
-  caldav_url: z.string().url("URL de CalDAV inválida.").optional().or(z.literal("")),
-  caldav_username: z.string().optional(),
-  caldav_password: z.string().optional(),
-  imap_host: z.string().optional(),
-  imap_port: z.preprocess(
-    (a) => (a === '' ? null : parseInt(z.string().parse(a), 10)),
-    z.number().nullable().optional()
-  ),
-  imap_ssl: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  zimbra_username: z.string().optional(),
-  zimbra_password: z.string().optional(),
-  redmine_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  gitlab_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  telegram_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  glpi_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  caldav_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  imap_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-});
-
 export const ClientSchema = z.object({
   nombre: z.string().min(1, "El nombre es un campo obligatorio."),
   id_proyecto: z.preprocess(
@@ -156,59 +101,6 @@ export const TecnologiaSchema = z.object({
   usuarios_externos: z.preprocess(
     (a) => (a === '' ? null : parseInt(z.string().parse(a), 10)),
     z.number().nullable().optional()
-  ),
-});
-
-export const ApiKeySchema = z.object({
-  staffId: z.preprocess(
-    (a) => parseInt(z.string().parse(a), 10),
-    z.number().positive("ID de personal inválido.")
-  ),
-  redmine_api_key: z.string().optional(),
-  redmine_url: z.string().url("URL de Redmine inválida.").optional().or(z.literal("")),
-  gitlab_api_key: z.string().optional(),
-  gitlab_url: z.string().url("URL de GitLab inválida.").optional().or(z.literal("")),
-  telegram_bot_token: z.string().optional(),
-  telegram_chat_id: z.string().optional(),
-  glpi_url: z.string().url("URL de GLPI inválida.").optional().or(z.literal("")),
-  glpi_api_key: z.string().optional(),
-  caldav_url: z.string().url("URL de CalDAV inválida.").optional().or(z.literal("")),
-  caldav_username: z.string().optional(),
-  caldav_password: z.string().optional(),
-  imap_host: z.string().optional(),
-  imap_port: z.preprocess(
-    (a) => (a === '' ? null : parseInt(z.string().parse(a), 10)),
-    z.number().nullable().optional()
-  ),
-  imap_ssl: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  zimbra_username: z.string().optional(),
-  zimbra_password: z.string().optional(),
-  redmine_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  gitlab_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  telegram_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  glpi_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  caldav_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
-  ),
-  imap_enabled: z.preprocess(
-    (a) => a === 'on',
-    z.boolean().optional()
   ),
 });
 

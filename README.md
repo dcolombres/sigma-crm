@@ -40,12 +40,12 @@ Create a file named `.env` and add the following content:
 
 ```
 # Database configuration
-DATABASE_URL=file:./dev.db
+DATABASE_URL="postgresql://user:password@localhost:5432/sigma-crm"
 ```
 
 **Explanation of the variables:**
 
-- **`DATABASE_URL`**: This is the connection string for your database. For local development, we are using a SQLite database, and the value should be `file:./dev.db`.
+- **`DATABASE_URL`**: This is the connection string for your database. Replace `USER`, `PASSWORD`, `HOST`, `PORT`, and `DATABASE` with your PostgreSQL credentials.
 
 ### 5. Set Up the Database
 
@@ -57,7 +57,6 @@ npx prisma migrate dev
 
 This command will:
 
-- Create the SQLite database file (`dev.db`) in the `prisma` directory.
 - Apply all the migrations from the `prisma/migrations` directory to the database.
 - Run the `prisma/seed.ts` script to populate the database with initial data, including users, projects, and other lookup tables.
 

@@ -10,9 +10,18 @@ import {
   UsersIcon,
   PuzzlePieceIcon,
   ChevronDoubleLeftIcon,
+  CogIcon,
 } from '@heroicons/react/24/outline';
+import React from 'react';
 
-const SidebarLink = ({ href, icon: Icon, isCollapsed, children }) => {
+interface SidebarLinkProps {
+  href: string;
+  icon: React.ElementType;
+  isCollapsed: boolean;
+  children: React.ReactNode;
+}
+
+const SidebarLink = ({ href, icon: Icon, isCollapsed, children }: SidebarLinkProps) => {
   const pathname = usePathname();
   const isActive = pathname === href || (href !== '/' && pathname.startsWith(href));
 
@@ -29,7 +38,12 @@ const SidebarLink = ({ href, icon: Icon, isCollapsed, children }) => {
   );
 };
 
-const Sidebar = ({ isCollapsed, toggleSidebar }) => {
+interface SidebarProps {
+  isCollapsed: boolean;
+  toggleSidebar: () => void;
+}
+
+const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
   return (
     <div className={`bg-white h-full fixed border-r border-gray-200 transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}>
       <div className="p-4 flex justify-center items-center gap-2">
@@ -38,10 +52,7 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
       </div>
       <nav className="mt-4">
         <ul>
-          <SidebarLink href="/" icon={HomeIcon} isCollapsed={isCollapsed}>
-            Dashboard
-          </SidebarLink>
-          <SidebarLink href="/proyectos" icon={FolderIcon} isCollapsed={isCollapsed}>
+          <SidebarLink href="/" icon={FolderIcon} isCollapsed={isCollapsed}>
             Proyectos
           </SidebarLink>
           <SidebarLink href="/staff" icon={UserGroupIcon} isCollapsed={isCollapsed}>
@@ -52,6 +63,12 @@ const Sidebar = ({ isCollapsed, toggleSidebar }) => {
           </SidebarLink>
           <SidebarLink href="/integraciones" icon={PuzzlePieceIcon} isCollapsed={isCollapsed}>
             Integraciones
+          </SidebarLink>
+          <SidebarLink href="/gestion" icon={CogIcon} isCollapsed={isCollapsed}>
+            Gestión
+          </SidebarLink>
+          <SidebarLink href="/dashboard" icon={HomeIcon} isCollapsed={isCollapsed}>
+            Dashboard
           </SidebarLink>
         </ul>
       </nav>
