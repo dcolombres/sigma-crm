@@ -34,7 +34,7 @@ export async function GET(request: Request) {
           staff: true,
           responsable: true,
           subresponsable: true,
-          clientes: true,
+          cliente: true,
         },
         skip,
         take: perPage,

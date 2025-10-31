@@ -9,10 +9,7 @@ export default async function EditarClientePage({ params }: { params: { id: stri
     notFound();
   }
 
-  const [cliente, proyectos] = await Promise.all([
-    prisma.cliente.findUnique({ where: { id } }),
-    prisma.proyecto.findMany({ orderBy: { nombre: 'asc' } }),
-  ]);
+  const cliente = await prisma.cliente.findUnique({ where: { id } });
 
   if (!cliente) {
     notFound();
@@ -24,7 +21,7 @@ export default async function EditarClientePage({ params }: { params: { id: stri
     <main className="flex flex-col items-center justify-center min-h-screen p-8 bg-gray-50">
       <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Editar Cliente</h1>
-        <ClienteEditForm client={cliente} updateClientWithId={updateClientWithId} proyectos={proyectos} />
+        <ClienteEditForm client={cliente} updateClientWithId={updateClientWithId} />
       </div>
     </main>
   );

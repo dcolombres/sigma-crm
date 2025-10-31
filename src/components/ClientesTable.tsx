@@ -7,7 +7,7 @@ import ResponsiveTable from './ResponsiveTable';
 import { PencilIcon } from '@heroicons/react/24/outline';
 
 interface ClientesTableProps {
-  clients: (Cliente & { proyecto: Proyecto })[];
+  clients: (Cliente & { proyectos: Proyecto[] })[];
   currentPage: number;
   totalPages: number;
 }
@@ -23,9 +23,13 @@ function ClienteTableRow({ cliente }: { cliente: ClientesTableProps['clients'][0
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cliente.email}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{cliente.celular}</td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-        <Link href={`/proyectos/${cliente.proyecto.id}`} className="no-underline">
-          {cliente.proyecto.nombre}
-        </Link>
+        {cliente.proyectos && cliente.proyectos.length > 0 ? (
+          <Link href={`/proyectos/${cliente.proyectos[0].id}`} className="no-underline">
+            {cliente.proyectos[0].nombre}
+          </Link>
+        ) : (
+          'N/A'
+        )}
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex gap-4">
         <Link href={`/clientes/${cliente.id}/editar`} className="text-primary hover:text-primary-dark no-underline p-2">

@@ -12,7 +12,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         staff: true,
         responsable: true,
         subresponsable: true,
-        clientes: true,
+        cliente: true,
       },
     });
     if (!proyecto) {

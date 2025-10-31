@@ -10,8 +10,17 @@ This guide will walk you through the process of setting up the project for local
 
 Before you begin, ensure you have the following installed on your system:
 
-- [Node.js](https://nodejs.org/) (version 18 or higher)
-- [npm](https://www.npmjs.com/) (which comes with Node.js)
+- **Node.js**: This project is configured to use a specific version of Node.js to ensure consistency and avoid potential conflicts.
+  - **Required Version**: `18.20.0`
+  - **Recommended Manager**: [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager)
+
+  This project includes a `.nvmrc` file. If you have `nvm` installed, you can switch to the correct Node.js version by running the following command in the project's root directory:
+  ```bash
+  nvm use
+  ```
+  If you don't have this version installed, `nvm` will prompt you to install it.
+
+- **npm**: This comes bundled with Node.js.
 
 ### 2. Clone the Repository
 
@@ -79,6 +88,14 @@ npm run import:staff
 ```
 
 This will allow for more complete bulk management.
+
+## Importing Project Data
+
+The `prisma/import_proyectos.ts` script can read the data from the Google Sheet and import it into the database. To use it, make sure the `GOOGLE_SHEETS_DOCUMENT_ID` in your `.env` file is set to the correct Google Sheet ID, and then run:
+
+```bash
+npm run import:proyectos
+```
 
 ## Troubleshooting
 

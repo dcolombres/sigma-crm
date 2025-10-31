@@ -5,6 +5,31 @@ Todos los cambios notables en este proyecto serán documentados en este archivo.
 El formato se basa en [Mantén un Changelog](https://keepachangelog.com/en/1.0.0/),
 y este proyecto se adhiere a [Versionado Semántico](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2025-10-30
+
+### Added
+- **Project Data Import:** Implemented a script to import project data from a Google Sheet, including all related fields and relationships.
+- **Project Subsections:** Added new tabs and forms for "Tecnología", "Backend", "Frontend", and "Base de Datos" in the project details view.
+- **Node.js Versioning:** Added a `.nvmrc` file to enforce a specific Node.js version (`18.20.0`) for the project.
+
+### Changed
+- **Database Schema:**
+    - Refactored the relationship between `Proyecto` and `Cliente` to be one-to-many (a client can have many projects).
+    - Added numerous new fields to the `Proyecto` model to match the data from the Google Sheet.
+- **UI/UX:**
+    - Updated the "General" tab in the project edit form to include all new fields from the Google Sheet.
+    - Replaced text inputs with dropdowns and multi-selects for relational data (e.g., Cliente, Responsable, Equipo).
+    - Implemented a read-only "STACK" field that is computed from other fields.
+
+### Fixed
+- **Build Errors:** Fixed a large number of build errors and type errors related to the new schema changes and form implementations.
+- **Data Fetching:** Corrected data fetching logic to use the new database schema and relations.
+- **Obsolete Code:** Removed obsolete forms, pages, and UI elements related to the old "Integraciones" and "Cliente-Proyecto" association logic.
+
+### Removed
+- **"Integraciones" Section:** Removed the entire "Integraciones" section, including pages, components, and sidebar links.
+- **Obsolete "Cliente-Proyecto" Form:** Removed the obsolete form and page for associating a project with a client.
+
 ## [1.4.0] - 2025-10-24
 
 ### Added

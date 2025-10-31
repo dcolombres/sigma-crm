@@ -26,11 +26,11 @@ export default async function ProyectosPage({
       }
     : {};
 
-  const [proyectosData, count] = await prisma.$transaction([
+  const [proyectos, count] = await prisma.$transaction([
     prisma.proyecto.findMany({
       where,
       include: {
-        clientes: true,
+        cliente: true,
         staff: true,
       },
       orderBy: {
@@ -41,11 +41,6 @@ export default async function ProyectosPage({
     }),
     prisma.proyecto.count({ where }),
   ]);
-
-  const proyectos = proyectosData.map(p => ({
-    ...p,
-    cliente: p.clientes[0] || null,
-  }));
 
   const totalPages = Math.ceil(count / perPage);
 

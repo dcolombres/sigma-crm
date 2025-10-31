@@ -86,19 +86,58 @@ model Proyecto {
   url_incidencias         String?
   url_changelog           String?
   changelog               Boolean?
-  clientes                Cliente[]     @relation("ProyectoClientes")
+  idCliente               Int?
+  cliente                 Cliente?      @relation(fields: [idCliente], references: [id])
+
+  // New fields from Google Sheet
+  origen                  String?
+  dependencia             String?
+  tier                    String?
+  cliente_nombre          String?
+  stack                   String?
+  equipo                  String?
+  categoria               String?
+  subcategoria            String?
+  responsable_nombre      String?
+  observacion             String?
+  captura_url             String?
+  nube                    String?
+  ticketera_interna       String?
+  ticketera_externa       String?
+  backend_lenguaje_principal String?
+  backend_version         String?
+  backend_otro_lenguaje   String?
+  backend_librerias       String?
+  backend_framework       String?
+  frontend_lenguaje_principal String?
+  frontend_version        String?
+  frontend_otro_lenguaje  String?
+  frontend_librerias      String?
+  frontend_framework      String?
+  db_tecnologia           String?
+  db_version              String?
+  db_tecnologia_2         String?
+  db_tamanio              String?
+  db_backup               String?
+  infra_instrucciones_stack String?
+  infra_alojamiento_hml   String?
+  infra_alojamiento_tst   String?
+  infra_contenedor        String?
+  infra_vms               String?
+  infra_instrucciones_deploy String?
+  infra_referente         String?
+  infra_notas_adicionales String?
 }
 
 model Cliente {
   id                      Int       @id @default(autoincrement())
   nombre                  String
-  id_proyecto             Int
-  proyecto                Proyecto  @relation("ProyectoClientes", fields: [id_proyecto], references: [id])
   email                   String?
   celular                 String?
   observacion             String?
   activo                  Boolean   @default(true)
   fecha_inicio_desarrollo DateTime?
+  proyectos               Proyecto[]
 }
 
 // Modelos de DPR

@@ -21,11 +21,10 @@ function SubmitButton() {
 
 interface ClienteEditFormProps {
   client: Cliente;
-  proyectos: Proyecto[];
   updateClientWithId: (prevState: { message: string; error: boolean; }, formData: FormData) => Promise<{ message: string; error: boolean; }>;
 }
 
-export default function ClienteEditForm({ client, proyectos, updateClientWithId }: ClienteEditFormProps) {
+export default function ClienteEditForm({ client, updateClientWithId }: ClienteEditFormProps) {
   const initialState = { message: "", error: false };
   const [state, dispatch] = useFormState(updateClientWithId, initialState);
 
@@ -47,20 +46,6 @@ export default function ClienteEditForm({ client, proyectos, updateClientWithId 
         <div>
           <label htmlFor="nombre" className="block text-sm font-medium text-primary mb-1">Nombre <span className="text-red-500">*</span></label>
           <input type="text" name="nombre" id="nombre" required defaultValue={client.nombre} className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary" />
-        </div>
-
-        <div>
-          <label htmlFor="id_proyecto" className="block text-sm font-medium text-primary mb-1">Proyecto Asociado <span className="text-red-500">*</span></label>
-          <select 
-            name="id_proyecto" 
-            id="id_proyecto" 
-            required 
-            defaultValue={client.id_proyecto}
-            className="w-full px-3 py-2 border border-gray-300 shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-          >
-            <option value="">Seleccionar proyecto...</option>
-            {proyectos.map(p => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-          </select>
         </div>
 
         <div>

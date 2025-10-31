@@ -61,9 +61,6 @@ const Sidebar = ({ isCollapsed, toggleSidebar }: SidebarProps) => {
           <SidebarLink href="/clientes" icon={UsersIcon} isCollapsed={isCollapsed}>
             Clientes
           </SidebarLink>
-          <SidebarLink href="/integraciones" icon={PuzzlePieceIcon} isCollapsed={isCollapsed}>
-            Integraciones
-          </SidebarLink>
           <SidebarLink href="/gestion" icon={CogIcon} isCollapsed={isCollapsed}>
             Gestión
           </SidebarLink>
